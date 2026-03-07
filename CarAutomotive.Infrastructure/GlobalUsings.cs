@@ -9,3 +9,6 @@ global using Microsoft.EntityFrameworkCore;
 global using System.Runtime.CompilerServices;
 global using CarAutomotive.Core.Entities.Identity;
 global using Microsoft.AspNetCore.Identity;
+global using CarAutomotive.Core.Interfaces;
+global using CarAutomotive.Infrastructure.Data.Repositories;
+global using System.Collections;
