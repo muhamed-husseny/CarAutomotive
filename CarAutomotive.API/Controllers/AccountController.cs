@@ -1,8 +1,4 @@
-﻿using CarAutomotive.Core.DTOs;
-using CarAutomotive.Core.Entities.Identity;
-using Microsoft.AspNetCore.Identity;
-
-namespace CarAutomotive.API.Controllers
+﻿namespace CarAutomotive.API.Controllers
 {
     public class AccountController : BaseApiController
     {
@@ -18,19 +14,20 @@ namespace CarAutomotive.API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<AppUserDto>> Login(LoginDto model)
         {
+
             var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user is null)
-                return Unauthorized();
+                return Unauthorized(new ApiResponse(401));
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
 
             if(result.Succeeded is false)
-                return Unauthorized();
+                return Unauthorized(new ApiResponse(401));
 
             return Ok(new AppUserDto()
             {
-                Email = user.Email,
+                Email = user.Email!,
                 DisplayName = user.DisplayName,
                 Token = "This is a token"
             });
@@ -42,6 +39,8 @@ namespace CarAutomotive.API.Controllers
         {
             var user = new AppUser()
             {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
                 DisplayName = model.DisplayName,
                 Email = model.Email,
                 UserName = model.Email.Split("@")[0],
@@ -50,7 +49,7 @@ namespace CarAutomotive.API.Controllers
 
             var result = await _userManager.CreateAsync(user, model.Password);
             if(result.Succeeded is false)
-                return BadRequest();
+                return BadRequest(new ApiResponse(400));
 
             return Ok(new AppUserDto()
             {
@@ -59,5 +58,7 @@ namespace CarAutomotive.API.Controllers
                 Token = "This is a token"
             });
         }
+
+
     }
 }
