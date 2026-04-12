@@ -10,3 +10,7 @@ global using Microsoft.EntityFrameworkCore;
 global using CarAutomotive.Core.Errors;
 global using System.Net;
 global using System.Text.Json;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using Microsoft.IdentityModel.Tokens;
+global using System.Text;
+

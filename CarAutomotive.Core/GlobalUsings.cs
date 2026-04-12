@@ -7,4 +7,5 @@ global using Microsoft.AspNetCore.Identity;
 global using CarAutomotive.Core.Common;
 global using System.Linq.Expressions;
 global using CarAutomotive.Core.Interfaces;
+global using CarAutomotive.Core.Entities.Identity;
 
