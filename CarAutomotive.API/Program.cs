@@ -1,6 +1,7 @@
 #region Configure Service
 
 
+using CarAutomotive.API.Extensions;
 using CarAutomotive.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-  
+
+builder.Services.AddApplicationServices(builder.Configuration);
 #endregion
 
 var app = builder.Build();
