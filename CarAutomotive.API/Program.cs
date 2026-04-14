@@ -43,6 +43,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseAuthentication();
+
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();
