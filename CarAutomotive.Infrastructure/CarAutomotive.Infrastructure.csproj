@@ -7,13 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarAutomotive.Application\CarAutomotive.Application.csproj" />
-    <ProjectReference Include="..\CarAutomotive.Core\CarAutomotive.Core.csproj" />
+    <Compile Remove="Data\Migrations\**" />
+    <EmbeddedResource Remove="Data\Migrations\**" />
+    <None Remove="Data\Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Config\" />
-    <Folder Include="Data\Migrations\" />
+    <ProjectReference Include="..\CarAutomotive.Application\CarAutomotive.Application.csproj" />
+    <ProjectReference Include="..\CarAutomotive.Core\CarAutomotive.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

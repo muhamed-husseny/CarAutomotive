@@ -1,4 +1,6 @@
-﻿namespace CarAutomotive.Infrastructure.Data
+﻿using CarAutomotive.Core.Entities;
+
+namespace CarAutomotive.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
     {
@@ -6,12 +8,14 @@
         {
             
         }
-
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+            builder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly()); // fager
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
