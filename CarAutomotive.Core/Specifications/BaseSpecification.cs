@@ -1,19 +1,23 @@
 ﻿namespace CarAutomotive.Core.Specifications
 {
-    public class BaseSpecification<T> : ISpecification<T>
+    public class BaseSpecification<T> : ISpecification<T> where T : BaseEntity
     {
-        public Expression<Func<T, bool>> Criteria { get; private set; }
+        public Expression<Func<T, bool>>? Criteria { get; private set; }
         public List<Expression<Func<T, object>>> Includes { get; } = new List<Expression<Func<T, object>>>();
-        public Expression<Func<T, object>> OrderBy { get; private set; }
-        public Expression<Func<T, object>> OrderByDescending { get; private set; }
+        public Expression<Func<T, object>>? OrderBy { get; private set; }
+        public Expression<Func<T, object>>? OrderByDescending { get; private set; }
+        public int Skip { get ; set ; }
+        public int Take { get ; set ; }
+        public bool IsPagingEnabled { get ; set ; }
+
         public BaseSpecification()
         {
-            
+            //criteria = null
         }
 
-        public BaseSpecification(Expression<Func<T,bool>> Criteria)
+        public BaseSpecification(Expression<Func<T, bool>> criteriaExpression)
         {
-            Criteria = Criteria;
+            Criteria = criteriaExpression;
         }
 
         protected void AddInclude(Expression<Func<T,object>> includeExpression)
@@ -29,6 +33,12 @@
         protected void AddOrderByDescending(Expression<Func<T, object>> orderByDescExpression)
         {
             OrderByDescending = orderByDescExpression;
+        }
+        protected void ApplyPagination(int pageIndex, int pageSize)
+        {
+            Skip = (pageIndex - 1) * pageSize;
+            Take = pageSize;
+            IsPagingEnabled = true;
         }
     }
 }
