@@ -1,11 +1,5 @@
 
-
 #region Configure Service
-
-
-using CarAutomotive.API.Extensions;
-using CarAutomotive.API.Middlewares;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -27,6 +21,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddApplicationServices(builder.Configuration);
+
+builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles())); 
 #endregion
 
 var app = builder.Build();

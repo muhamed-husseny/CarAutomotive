@@ -7,12 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarAutomotive.Core\CarAutomotive.Core.csproj" />
+    <Compile Remove="Helpers\**" />
+    <EmbeddedResource Remove="Helpers\**" />
+    <None Remove="Helpers\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
-    <Folder Include="Helpers\" />
+    <ProjectReference Include="..\CarAutomotive.Core\CarAutomotive.Core.csproj" />
   </ItemGroup>
 
 </Project>
