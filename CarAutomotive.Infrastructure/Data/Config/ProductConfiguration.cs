@@ -1,10 +1,4 @@
 ﻿using CarAutomotive.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace CarAutomotive.Infrastructure.Data.Config
 {
     internal class ProductConfiguration : IEntityTypeConfiguration<Product>
@@ -15,7 +9,7 @@ namespace CarAutomotive.Infrastructure.Data.Config
 
             builder.Property(p => p.Name)
                    .IsRequired()
-                   .HasMaxLength(150);
+                   .HasMaxLength(100);
 
             builder.Property(p => p.Description)
                    .HasMaxLength(1000);

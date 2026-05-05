@@ -1,10 +1,4 @@
 ﻿using CarAutomotive.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace CarAutomotive.Infrastructure.Data.Config
 {
     internal class CategoryConfiguration : IEntityTypeConfiguration<Category>

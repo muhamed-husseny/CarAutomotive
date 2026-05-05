@@ -1,84 +1,70 @@
-﻿namespace CarAutomotive.API.Controllers
+﻿using CarAutomotive.Application.Services;
+
+
+namespace CarAutomotive.API.Controllers
 {
     public class ProductsController : BaseApiController
     {
-        private readonly IGenericRepository<Product> _repo;
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
-        public ProductsController(IGenericRepository<Product> repo , IMapper mapper, IUnitOfWork unitOfWork)
+        private readonly IProductService _productService;
+        private readonly IValidator<CreateProductDto> _createProductValidator;
+        private readonly IValidator<UpdateProductDto> _updateProductValidator;
+        public ProductsController(IProductService productService,
+                                  IValidator<CreateProductDto> createProductValidator,
+                                  IValidator<UpdateProductDto> updateProductValidator)
         {
-            _repo = repo;
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
+            _productService = productService;
+            _createProductValidator = createProductValidator;
+            _updateProductValidator = updateProductValidator;
         }
 
         // GET: /api/products
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductDto>>> GetProducts([FromQuery] ProductFilterDto filter)
         {
-            var spec = new ProductsWithCategorySpec(
-                filter.Sort,
-                filter.CategoryId,
-                filter.MinPrice,
-                filter.MaxPrice,
-                filter.Search,
-                filter.PageIndex,
-                filter.PageSize);
-            var products = await _repo.GetAllWithSpecAsync(spec);
-            var data = _mapper.Map<IReadOnlyList<ProductDto>>(products);
-            var countSpec = new ProductsWithFilterForCountSpec(
-                filter.CategoryId,
-                filter.MinPrice,
-                filter.MaxPrice,
-                filter.Search);
-            var count = await _repo.CountAsync(countSpec);
-            return Ok(new Pagination<ProductDto>(
-                filter.PageIndex,
-                filter.PageSize,
-                count,
-                data));
+            var products = await _productService.GetProductsAsync(filter);
+
+            return Ok(products);
         }
 
         // GET: /api/products/{id}
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ProductDto>> GetProductById(int id)
         {
-            var spec = new ProductsWithCategorySpec(id);
-            var product = await _repo.GetByIdWithSpecAsync(spec);
+            var product = await _productService.GetProductByIdAsync(id);
 
-            if (product==null)
+            if (product == null)
                 return NotFound();
 
-            return Ok(_mapper.Map<Product,ProductDto>(product));
+            return Ok(product);
         }
+
         [HttpPost]
-        public async Task<ActionResult> CreateProduct(CreateProductDto dto)
+        public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductDto dto)
         {
-            var product = _mapper.Map<Product>(dto);
-            _unitOfWork.Repository<Product>().Add(product);
-            await _unitOfWork.CompleteAsync();
-            var productDto = _mapper.Map<ProductDto>(product);
-            return Ok(productDto);
+            var validationResult = await _createProductValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid) return BadRequest(validationResult.Errors);
+            var product = await _productService.CreateProductAsync(dto);
+            return Ok(product);
         }
+
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<ProductDto>> UpdateProduct(int id,UpdateProductDto dto)
+        public async Task<ActionResult<ProductDto>> UpdateProduct(int id, UpdateProductDto dto)
         {
-            var product = await _unitOfWork.Repository<Product>().GetByIdAsync(id);
+            var validationResult = await _updateProductValidator.ValidateAsync(dto);
+            if (!validationResult.IsValid) return BadRequest(validationResult.Errors);
+            var product = await _productService.UpdateProductAsync(id, dto);
             if (product == null) return NotFound();
-            _mapper.Map(dto, product);
-            _unitOfWork.Repository<Product>().Update(product);
-            await _unitOfWork.CompleteAsync();
-            var productDto = _mapper.Map<ProductDto>(product);
-            return Ok(productDto);
+            return Ok(product);
         }
+
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
-            var product = await _unitOfWork.Repository<Product>().GetByIdAsync(id);
-            if (product == null)
+            var result = await _productService.DeleteProductAsync(id);
+
+            if (!result)
                 return NotFound();
-            _unitOfWork.Repository<Product>().Delete(product);
-            await _unitOfWork.CompleteAsync();
+
             return NoContent();
         }
 

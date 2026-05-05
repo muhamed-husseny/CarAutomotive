@@ -11,10 +11,17 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<MappingProfiles>();
 });
 
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
@@ -22,7 +29,9 @@ builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
-builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles())); 
+builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateProductDtoValidator>();
 #endregion
 
 var app = builder.Build();

@@ -26,4 +26,8 @@
     <ProjectReference Include="..\CarAutomotive.Infrastructure\CarAutomotive.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+
 </Project>
