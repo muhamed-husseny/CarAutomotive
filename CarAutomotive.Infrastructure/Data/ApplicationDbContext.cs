@@ -1,17 +1,21 @@
-﻿namespace CarAutomotive.Infrastructure.Data
+﻿using CarAutomotive.Infrastructure.Data.Config;
+
+namespace CarAutomotive.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-            
         }
+
+        public DbSet<MechanicProfile> MechanicProfiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+            builder.ApplyConfigurationsFromAssembly(typeof(MechanicProfileConfiguration).Assembly);
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -22,12 +26,11 @@
                 {
                     entry.Entity.CreatedAt = DateTime.UtcNow;
                 }
-
                 else if (entry.State == EntityState.Modified)
                 {
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
                 }
-            }    
+            }
             return base.SaveChangesAsync(cancellationToken);
         }
     }

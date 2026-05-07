@@ -1,6 +1,4 @@
-﻿using CarAutomotive.Infrastructure.Data.Services;
-
-namespace CarAutomotive.API.Extensions
+﻿namespace CarAutomotive.API.Extensions
 {
     public static class ApplicationServicesExtension
     {
@@ -8,9 +6,10 @@ namespace CarAutomotive.API.Extensions
         {
             services.AddScoped<ITokenService, TokenService>();
 
-            services.AddAuthentication(options =>
+            services.AddScoped<IMechanicService, MechanicProfileService>();
+
+            services.AddAutoMapper(config => config.AddMaps(typeof(MechanicMappingProfile).Assembly)); services.AddAuthentication(options =>
             {
-               
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
               
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
