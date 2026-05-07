@@ -1,9 +1,5 @@
 #region Configure Service
 
-
-using CarAutomotive.API.Extensions;
-using CarAutomotive.API.Middlewares;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,13 +14,16 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+        o => o.UseNetTopologySuite());
 });
 
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddApplicationServices(builder.Configuration);
+
+builder.Services.AddValidatorsFromAssembly(typeof(CreateMechanicProfileDtoValidator).Assembly);
 #endregion
 
 var app = builder.Build();
@@ -41,9 +40,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
@@ -53,16 +51,15 @@ var loggerFactory = services.GetRequiredService<ILoggerFactory>();
 
 try
 {
-
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
-
 
     await dbContext.Database.MigrateAsync();
 
-
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
     await CarAutomotive.Infrastructure.Data.DataSeeds.StoreContextSeed.AppIdentityDbContextSeed.SeedUsersAsync(userManager);
 
+    await CarAutomotive.Infrastructure.Data.DataSeeds.MechanicContextSeed.SeedAsync(dbContext, userManager);
 }
 catch (Exception ex)
 {

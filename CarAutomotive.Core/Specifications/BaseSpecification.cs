@@ -3,25 +3,30 @@
     public class BaseSpecification<T> : ISpecification<T>
     {
         public Expression<Func<T, bool>> Criteria { get; private set; }
+
+       
         public List<Expression<Func<T, object>>> Includes { get; } = new List<Expression<Func<T, object>>>();
+        public List<string> IncludeStrings { get; } = new List<string>();
+
         public Expression<Func<T, object>> OrderBy { get; private set; }
         public Expression<Func<T, object>> OrderByDescending { get; private set; }
+
         public BaseSpecification()
         {
-            
         }
 
-        public BaseSpecification(Expression<Func<T,bool>> Criteria)
+        
+        public BaseSpecification(Expression<Func<T, bool>> criteria)
         {
-            Criteria = Criteria;
+            Criteria = criteria; 
         }
 
-        protected void AddInclude(Expression<Func<T,object>> includeExpression)
+        protected void AddInclude(Expression<Func<T, object>> includeExpression)
         {
             Includes.Add(includeExpression);
         }
 
-        protected void AddOrderBy(Expression<Func<T,object>> orderByExpression)
+        protected void AddOrderBy(Expression<Func<T, object>> orderByExpression)
         {
             OrderBy = orderByExpression;
         }

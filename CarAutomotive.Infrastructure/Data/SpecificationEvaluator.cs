@@ -15,15 +15,17 @@
             {
                 query = query.OrderBy(spec.OrderBy);
             }
-
-
             else if (spec.OrderByDescending != null)
             {
                 query = query.OrderByDescending(spec.OrderByDescending);
             }
 
-            query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
+            if (spec.Includes != null && spec.Includes.Any())
+            {
+                query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
+            }
 
+         
             return query;
         }
     }
