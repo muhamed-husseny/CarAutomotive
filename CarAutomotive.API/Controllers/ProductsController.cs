@@ -1,7 +1,4 @@
-﻿using CarAutomotive.Application.Services;
-
-
-namespace CarAutomotive.API.Controllers
+﻿namespace CarAutomotive.API.Controllers
 {
     public class ProductsController : BaseApiController
     {
