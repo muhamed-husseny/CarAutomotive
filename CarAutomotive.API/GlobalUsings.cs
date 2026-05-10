@@ -22,3 +22,6 @@ global using CarAutomotive.API.Middlewares;
 global using CarAutomotive.Core.MappingProfiles;
 global using CarAutomotive.Infrastructure.Data.Services;
 global using CarAutomotive.Infrastructure.Services;
+global using CarAutomotive.Core.DTOs.AppointmentsDto;
+global using CarAutomotive.Core.Enums;
+global using CarAutomotive.Core.DTOs.ReviewsDto;

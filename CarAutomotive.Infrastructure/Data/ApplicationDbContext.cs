@@ -9,6 +9,9 @@ namespace CarAutomotive.Infrastructure.Data
         }
 
         public DbSet<MechanicProfile> MechanicProfiles { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

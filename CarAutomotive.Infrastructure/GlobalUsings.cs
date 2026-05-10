@@ -23,3 +23,7 @@ global using CarAutomotive.Core.DTOs.MechanicDtos;
 global using CarAutomotive.Core.Specifications;
 global using NetTopologySuite.Geometries;
 global using System.Text.Json;
+global using CarAutomotive.Core.Entities.Appointment;
+global using CarAutomotive.Core.DTOs.AppointmentsDto;
+global using CarAutomotive.Core.Enums;
+global using CarAutomotive.Core.DTOs.ReviewsDto;
