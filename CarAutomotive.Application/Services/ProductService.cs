@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using CarAutomotive.Application.Dtos;
-using CarAutomotive.Core.Entities;
-using CarAutomotive.Core.Interfaces;
-using CarAutomotive.Core.Specifications;
+﻿using CarAutomotive.Core.Specifications;
+using Microsoft.AspNetCore.Http;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CarAutomotive.Application.Services
 {
@@ -10,11 +8,12 @@ namespace CarAutomotive.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
-        public ProductService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IFileStorageService _fileStorageService;
+        public ProductService(IUnitOfWork unitOfWork, IMapper mapper, IFileStorageService fileStorageService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<Pagination<ProductDto>> GetProductsAsync(ProductFilterDto filter)
@@ -117,6 +116,46 @@ namespace CarAutomotive.Application.Services
 
             await _unitOfWork.CompleteAsync();
 
+            return true;
+        }
+
+        public async Task<string?> UploadProductImageAsync(int productId, IFormFile file)
+        {
+            var product = await _unitOfWork
+                .Repository<Product>()
+                .GetByIdAsync(productId);
+
+            if (product == null)
+                return null;
+
+            var imageUrl = await _fileStorageService.UploadFileAsync(file, "products");
+
+            var productImage = new ProductImage
+            {
+                ProductId = productId,
+                ImageUrl = imageUrl
+            };
+
+            _unitOfWork.Repository<ProductImage>().Add(productImage);
+
+            await _unitOfWork.CompleteAsync();
+
+            return imageUrl;
+        }
+
+        public async Task<bool> DeleteProductImageAsync(int productId, int imageId)
+        {
+            var productImage = await _unitOfWork
+               .Repository<ProductImage>()
+               .GetByIdAsync(imageId);
+            
+            if (productImage?.ImageUrl == null || productImage.ProductId != productId)
+                return false;
+
+            await _fileStorageService.DeleteFileAsync(productImage.ImageUrl);
+            _unitOfWork.Repository<ProductImage>().Delete(productImage);
+
+            await _unitOfWork.CompleteAsync();
             return true;
         }
     }

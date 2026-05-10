@@ -25,3 +25,4 @@ global using FluentValidation;
 global using CarAutomotive.Application.Validators;
 global using CarAutomotive.Application.Mapping;
 global using CarAutomotive.Application.Services;
+global using CarAutomotive.Infrastructure.Services;

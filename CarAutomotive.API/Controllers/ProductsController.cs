@@ -64,6 +64,26 @@
 
             return NoContent();
         }
+        [HttpPost("{id:int}/images")]
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<string>> UploadProductImage(int id, IFormFile file)
+        {
+            var imageUrl = await _productService.UploadProductImageAsync(id, file);
 
+            if (imageUrl == null)
+                return NotFound();
+
+            return Ok(imageUrl);
+        }
+        [HttpDelete("{productId:int}/images/{imageId:int}")]
+        public async Task<ActionResult> DeleteProductImage(int productId, int imageId)
+        {
+            var result = await _productService.DeleteProductImageAsync(productId, imageId);
+
+            if (!result)
+                return NotFound();
+
+            return NoContent();
+        }
     }
 }

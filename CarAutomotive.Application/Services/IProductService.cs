@@ -1,5 +1,4 @@
-﻿using CarAutomotive.Application.Dtos;
-
+﻿using Microsoft.AspNetCore.Http;
 namespace CarAutomotive.Application.Services
 {
     public interface IProductService 
@@ -9,6 +8,7 @@ namespace CarAutomotive.Application.Services
         Task<ProductDto> CreateProductAsync(CreateProductDto dto);
         Task<ProductDto?> UpdateProductAsync(int id , UpdateProductDto dto);
         Task<bool> DeleteProductAsync(int id);
-
+        Task<string?> UploadProductImageAsync(int productId, IFormFile file);
+        Task<bool> DeleteProductImageAsync(int productId, int imageId);
     }
 }

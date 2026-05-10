@@ -22,6 +22,7 @@ namespace CarAutomotive.Core.Specifications
             {
                 switch (sort)
                 {
+
                     case "priceAsc":
                         AddOrderBy(p => p.Price);
                         break;
@@ -51,7 +52,7 @@ namespace CarAutomotive.Core.Specifications
                         break;
                 }
             }
-            else AddOrderBy (p => p.Name);
+            else AddOrderBy (p => p.Id);
             ApplyPagination(pageIndex, pageSize);
         }
         public ProductsWithCategorySpec(int id) : base(p => p.Id == id) 

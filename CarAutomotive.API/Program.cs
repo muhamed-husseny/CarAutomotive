@@ -1,5 +1,7 @@
 
 #region Configure Service
+using CarAutomotive.Infrastructure.Data.DataSeeds;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -13,7 +15,7 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -48,6 +50,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
 app.UseAuthorization();
 
 app.UseAuthentication();
@@ -66,6 +70,7 @@ try
 
     await dbContext.Database.MigrateAsync();
 
+    await StoreContextSeed.SeedAsync(dbContext);
 
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     await CarAutomotive.Infrastructure.Data.DataSeeds.StoreContextSeed.AppIdentityDbContextSeed.SeedUsersAsync(userManager);

@@ -1,0 +1,142 @@
+[
+  {
+    "name": "Brake Pads",
+    "description": "High quality brake pads for daily driving.",
+    "price": 120.00,
+    "stockCount": 25,
+    "categoryId": 1
+  },
+  {
+    "name": "Brake Disc",
+    "description": "Durable front brake disc for improved braking performance.",
+    "price": 250.00,
+    "stockCount": 15,
+    "categoryId": 1
+  },
+  {
+    "name": "Brake Fluid",
+    "description": "DOT 4 brake fluid suitable for most vehicles.",
+    "price": 80.00,
+    "stockCount": 40,
+    "categoryId": 1
+  },
+  {
+    "name": "Engine Oil 5W-30",
+    "description": "Synthetic engine oil for modern gasoline engines.",
+    "price": 450.00,
+    "stockCount": 30,
+    "categoryId": 2
+  },
+  {
+    "name": "Oil Filter",
+    "description": "Engine oil filter for clean oil circulation.",
+    "price": 90.00,
+    "stockCount": 50,
+    "categoryId": 2
+  },
+  {
+    "name": "Air Filter",
+    "description": "Air filter to improve engine air intake quality.",
+    "price": 110.00,
+    "stockCount": 45,
+    "categoryId": 2
+  },
+  {
+    "name": "Spark Plugs Set",
+    "description": "Set of spark plugs for better ignition performance.",
+    "price": 180.00,
+    "stockCount": 35,
+    "categoryId": 2
+  },
+  {
+    "name": "Car Tire 195/65R15",
+    "description": "Durable all-season tire for passenger cars.",
+    "price": 1600.00,
+    "stockCount": 20,
+    "categoryId": 3
+  },
+  {
+    "name": "Car Tire 205/55R16",
+    "description": "High performance tire with strong road grip.",
+    "price": 1850.00,
+    "stockCount": 18,
+    "categoryId": 3
+  },
+  {
+    "name": "Wheel Cover Set",
+    "description": "Stylish wheel cover set for 15 inch wheels.",
+    "price": 300.00,
+    "stockCount": 22,
+    "categoryId": 3
+  },
+  {
+    "name": "Headlight Bulb",
+    "description": "Bright halogen headlight bulb for night driving.",
+    "price": 130.00,
+    "stockCount": 60,
+    "categoryId": 4
+  },
+  {
+    "name": "LED Fog Light",
+    "description": "LED fog light for improved visibility in bad weather.",
+    "price": 380.00,
+    "stockCount": 16,
+    "categoryId": 4
+  },
+  {
+    "name": "Car Battery 60Ah",
+    "description": "Reliable 60Ah car battery for daily use.",
+    "price": 2400.00,
+    "stockCount": 12,
+    "categoryId": 4
+  },
+  {
+    "name": "Alternator",
+    "description": "Replacement alternator for stable electrical charging.",
+    "price": 3200.00,
+    "stockCount": 8,
+    "categoryId": 4
+  },
+  {
+    "name": "Shock Absorber",
+    "description": "Front shock absorber for smooth driving comfort.",
+    "price": 900.00,
+    "stockCount": 14,
+    "categoryId": 5
+  },
+  {
+    "name": "Control Arm",
+    "description": "Durable suspension control arm for better stability.",
+    "price": 750.00,
+    "stockCount": 10,
+    "categoryId": 5
+  },
+  {
+    "name": "Tie Rod End",
+    "description": "Steering tie rod end for accurate wheel alignment.",
+    "price": 220.00,
+    "stockCount": 25,
+    "categoryId": 5
+  },
+  {
+    "name": "Stabilizer Link",
+    "description": "Suspension stabilizer link to reduce body roll.",
+    "price": 180.00,
+    "stockCount": 28,
+    "categoryId": 5
+  },
+  {
+    "name": "Fuel Filter",
+    "description": "Fuel filter to protect the engine from impurities.",
+    "price": 140.00,
+    "stockCount": 32,
+    "categoryId": 2
+  },
+  {
+    "name": "Rear Brake Shoes",
+    "description": "Rear brake shoes for reliable braking performance.",
+    "price": 210.00,
+    "stockCount": 18,
+    "categoryId": 1
+  }
+]

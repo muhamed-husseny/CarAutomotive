@@ -1,8 +1,4 @@
-﻿using AutoMapper;
-using CarAutomotive.Application.Dtos;
-using CarAutomotive.Core.Entities;
-using CarAutomotive.Core.Interfaces;
-namespace CarAutomotive.Application.Services
+﻿namespace CarAutomotive.Application.Services
 {
     public class CategoryService : ICategoryService
     {
