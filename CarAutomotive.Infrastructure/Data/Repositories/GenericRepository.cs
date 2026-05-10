@@ -61,5 +61,24 @@ namespace CarAutomotive.Infrastructure.Data.Repositories
         {
             _context.Set<T>().Remove(entity);
         }
+        public async Task<IReadOnlyList<T>> GetAll()
+        {
+            return await GetAllAsync();
+        }
+
+        public async Task<T?> GetById(Guid id)
+        {
+            return await _context.Set<T>().FindAsync(id);
+        }
+
+        public async Task<T?> GetEntityWithSpec(ISpecification<T> spec)
+        {
+            return await GetByIdWithSpecAsync(spec);
+        }
+
+        public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
+        {
+            return await GetAllWithSpecAsync(spec);
+        }
     }
 }
