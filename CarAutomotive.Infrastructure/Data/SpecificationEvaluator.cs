@@ -1,8 +1,14 @@
-﻿namespace CarAutomotive.Infrastructure.Data
+﻿using CarAutomotive.Core.Common;
+using CarAutomotive.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace CarAutomotive.Infrastructure.Data
 {
     public class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
     {
-        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> spec)
+        public static IQueryable<TEntity> GetQuery(
+            IQueryable<TEntity> inputQuery,
+            ISpecification<TEntity> spec)
         {
             var query = inputQuery;
 
@@ -15,8 +21,6 @@
             {
                 query = query.OrderBy(spec.OrderBy);
             }
-
-
             else if (spec.OrderByDescending != null)
             {
                 query = query.OrderByDescending(spec.OrderByDescending);
@@ -26,7 +30,20 @@
             {
                 query = query.Skip(spec.Skip).Take(spec.Take);
             }
-            query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
+
+            if (spec.Includes.Any())
+            {
+                query = spec.Includes.Aggregate(
+                    query,
+                    (current, include) => current.Include(include));
+            }
+
+            if (spec.IncludeStrings.Any())
+            {
+                query = spec.IncludeStrings.Aggregate(
+                    query,
+                    (current, include) => current.Include(include));
+            }
 
             return query;
         }

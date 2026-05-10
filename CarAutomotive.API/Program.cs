@@ -1,15 +1,12 @@
-
 #region Configure Service
+
 using CarAutomotive.Infrastructure.Data.DataSeeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); 
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -19,8 +16,10 @@ builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+        o => o.UseNetTopologySuite());
 });
+
 builder.Services.AddAutoMapper(cfg =>
 {
     cfg.AddProfile<MappingProfiles>();
@@ -31,16 +30,23 @@ builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
-builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
-
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProductDtoValidator>();
+builder.Services.AddValidatorsFromAssembly(typeof(CreateMechanicProfileDtoValidator).Assembly);
+
 #endregion
 
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateProductDtoValidator>();
+#endregion
+
+var app = builder.Build();
+
+var app = builder.Build();
 
 #region Configure Kestrel Middlewares
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -52,11 +58,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-app.UseAuthorization();
-
 app.UseAuthentication();
-
-app.MapControllers();
+app.UseAuthorization();
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
@@ -64,23 +67,23 @@ var loggerFactory = services.GetRequiredService<ILoggerFactory>();
 
 try
 {
-
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
-
 
     await dbContext.Database.MigrateAsync();
 
     await StoreContextSeed.SeedAsync(dbContext);
 
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
-    await CarAutomotive.Infrastructure.Data.DataSeeds.StoreContextSeed.AppIdentityDbContextSeed.SeedUsersAsync(userManager);
 
+
+    await CarAutomotive.Infrastructure.Data.DataSeeds.MechanicContextSeed.SeedAsync(dbContext, userManager);
 }
 catch (Exception ex)
 {
     var logger = loggerFactory.CreateLogger<Program>();
     logger.LogError(ex, "An error occurred during database migration or data seeding.");
 }
+
 #endregion
 
 app.Run();

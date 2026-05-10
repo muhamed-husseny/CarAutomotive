@@ -1,18 +1,31 @@
-﻿namespace CarAutomotive.Core.Specifications
+﻿using CarAutomotive.Core.Common;
+using CarAutomotive.Core.Interfaces;
+using System.Linq.Expressions;
+
+namespace CarAutomotive.Core.Specifications
 {
     public class BaseSpecification<T> : ISpecification<T> where T : BaseEntity
     {
         public Expression<Func<T, bool>>? Criteria { get; private set; }
-        public List<Expression<Func<T, object>>> Includes { get; } = new List<Expression<Func<T, object>>>();
+
+        public List<Expression<Func<T, object>>> Includes { get; }
+            = new List<Expression<Func<T, object>>>();
+
+        public List<string> IncludeStrings { get; }
+            = new List<string>();
+
         public Expression<Func<T, object>>? OrderBy { get; private set; }
+
         public Expression<Func<T, object>>? OrderByDescending { get; private set; }
-        public int Skip { get ; set ; }
-        public int Take { get ; set ; }
-        public bool IsPagingEnabled { get ; set ; }
+
+        public int Skip { get; private set; }
+
+        public int Take { get; private set; }
+
+        public bool IsPagingEnabled { get; private set; }
 
         public BaseSpecification()
         {
-            //criteria = null
         }
 
         public BaseSpecification(Expression<Func<T, bool>> criteriaExpression)
@@ -20,12 +33,17 @@
             Criteria = criteriaExpression;
         }
 
-        protected void AddInclude(Expression<Func<T,object>> includeExpression)
+        protected void AddInclude(Expression<Func<T, object>> includeExpression)
         {
             Includes.Add(includeExpression);
         }
 
-        protected void AddOrderBy(Expression<Func<T,object>> orderByExpression)
+        protected void AddInclude(string includeString)
+        {
+            IncludeStrings.Add(includeString);
+        }
+
+        protected void AddOrderBy(Expression<Func<T, object>> orderByExpression)
         {
             OrderBy = orderByExpression;
         }
@@ -34,6 +52,7 @@
         {
             OrderByDescending = orderByDescExpression;
         }
+
         protected void ApplyPagination(int pageIndex, int pageSize)
         {
             Skip = (pageIndex - 1) * pageSize;

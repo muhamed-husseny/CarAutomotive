@@ -4,6 +4,7 @@ using CarAutomotive.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -20,6 +21,7 @@ namespace CarAutomotive.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "8.0.24")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("CarAutomotive.Core.Entities.Category", b =>
@@ -139,6 +141,84 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("AverageRating")
+                        .HasColumnType("double precision");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("boolean");
+
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("geography(Point, 4326)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("TotalReviews")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("YearsOfExperience")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Location");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "GIST");
+
+                    b.ToTable("MechanicProfiles");
+                });
+
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Mechanic.MechanicService", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("EstimatedPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("MechanicProfileId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ServiceName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MechanicProfileId");
+
+                    b.ToTable("MechanicService");
+                });
+
             modelBuilder.Entity("CarAutomotive.Core.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -159,7 +239,7 @@ namespace CarAutomotive.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(150)
+                        .HasMaxLength(100)
                         .HasColumnType("character varying(150)");
 
                     b.Property<decimal>("Price")
@@ -328,6 +408,17 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Mechanic.MechanicService", b =>
+                {
+                    b.HasOne("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", "MechanicProfile")
+                        .WithMany("Services")
+                        .HasForeignKey("MechanicProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MechanicProfile");
+                });
+
             modelBuilder.Entity("CarAutomotive.Core.Entities.Product", b =>
                 {
                     b.HasOne("CarAutomotive.Core.Entities.Category", "Category")
@@ -399,6 +490,11 @@ namespace CarAutomotive.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", b =>
+                {
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("CarAutomotive.Core.Entities.Category", b =>
