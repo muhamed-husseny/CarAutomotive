@@ -1,14 +1,5 @@
 ﻿using CarAutomotive.Core.Entities;
-
 using CarAutomotive.Infrastructure.Data.Config;
-
-using CarAutomotive.Core.Entities;
-using CarAutomotive.Core.Identity;
-using CarAutomotive.Infrastructure.Data.Config;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-
 namespace CarAutomotive.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>

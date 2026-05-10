@@ -1,8 +1,4 @@
-﻿using CarAutomotive.Core.Common;
-using CarAutomotive.Core.Interfaces;
-using System.Linq.Expressions;
-
-namespace CarAutomotive.Core.Specifications
+﻿namespace CarAutomotive.Core.Specifications
 {
     public class BaseSpecification<T> : ISpecification<T> where T : BaseEntity
     {
