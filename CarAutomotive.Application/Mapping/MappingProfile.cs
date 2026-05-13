@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using CarAutomotive.Core.Entities;
-namespace CarAutomotive.Application.Mapping
+﻿namespace CarAutomotive.Application.Mapping
 {
     public class MappingProfiles : Profile
     {

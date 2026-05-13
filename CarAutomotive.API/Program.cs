@@ -1,6 +1,7 @@
 
 #region Configure Service
 using CarAutomotive.Infrastructure.Data.DataSeeds;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +17,19 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>(); 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
         o => o.UseNetTopologySuite());
+});
+builder.Services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
+{
+    var connection = builder.Configuration.GetConnectionString("Redis");
+    if (string.IsNullOrWhiteSpace(connection))
+        throw new InvalidOperationException("Redis connection string is missing.");
+    return ConnectionMultiplexer.Connect(connection);
 });
 builder.Services.AddAutoMapper(cfg =>
 {
