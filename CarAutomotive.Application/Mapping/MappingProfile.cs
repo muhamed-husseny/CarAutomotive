@@ -1,4 +1,6 @@
-﻿namespace CarAutomotive.Application.Mapping
+﻿using CarAutomotive.Application.Dtos.Cart;
+
+namespace CarAutomotive.Application.Mapping
 {
     public class MappingProfiles : Profile
     {
@@ -24,6 +26,9 @@
                         ImageUrl = url
                     })));
             CreateMap<Category, CategoryDto>();
+            CreateMap<ShoppingCart, CartDto>();
+            CreateMap<CartItem, CartItemDto>();
+              
         }
     }
 }

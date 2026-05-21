@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CarAutomotive.Application.Dtos
+﻿namespace CarAutomotive.Application.Dtos.Cart
 {
-    internal class CartDto
+    public class CartDto
     {
+        public string Id { get; set; } = null!;
+        public IReadOnlyList<CartItemDto> Items { get; set;}= new List<CartItemDto>();
+        public int TotalQuantity => Items.Sum(item => item.Quantity);
+        public decimal TotalPrice => Items.Sum(item => item.TotalPrice);
     }
 }

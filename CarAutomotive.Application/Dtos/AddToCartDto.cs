@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CarAutomotive.Application.Dtos
+﻿namespace CarAutomotive.Application.Dtos
 {
-    internal class AddToCartDto
+    public class AddToCartDto
     {
+       public int ProductId { get; set; }
+       public int Quantity { get; set; }
+        //this dto contain prodcutID & Quantity only casue the user allowed to send only these two properties
     }
 }
