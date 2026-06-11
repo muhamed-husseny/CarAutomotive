@@ -29,3 +29,5 @@ global using CarAutomotive.Infrastructure.Services;
 global using CarAutomotive.Core.DTOs.MechanicDtos;
 global using CarAutomotive.Core.MappingProfiles;
 global using CarAutomotive.Infrastructure.Data.Services;
+global using CarAutomotive.Application.Dtos.Cart;
+global using CarAutomotive.Application.Dtos.Orders;

@@ -1,4 +1,5 @@
 ﻿using CarAutomotive.Application.Dtos.Cart;
+using CarAutomotive.Core.Entities.Orders;
 
 namespace CarAutomotive.Application.Mapping
 {
@@ -28,7 +29,15 @@ namespace CarAutomotive.Application.Mapping
             CreateMap<Category, CategoryDto>();
             CreateMap<ShoppingCart, CartDto>();
             CreateMap<CartItem, CartItemDto>();
-              
+            CreateMap<ShippingAddress, ShippingAddressDto>();
+
+            CreateMap<OrderItem, OrderItemDto>();
+
+            CreateMap<Order, OrderToReturnDto>()
+                .ForMember(
+                    d => d.Status,
+                    o => o.MapFrom(s => s.Status.ToString()));
+
         }
     }
 }

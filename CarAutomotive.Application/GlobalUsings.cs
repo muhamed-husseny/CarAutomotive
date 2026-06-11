@@ -6,3 +6,4 @@ global using CarAutomotive.Core.Interfaces;
 global using CarAutomotive.Core.DTOs.MechanicDtos;
 global using CarAutomotive.Core.Entities.Mechanic;
 global using CarAutomotive.Application.Dtos.Cart;
+global using CarAutomotive.Application.Dtos.Orders;
