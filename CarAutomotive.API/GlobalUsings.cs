@@ -35,3 +35,5 @@ global using CarAutomotive.Core.Enums;
 global using CarAutomotive.Core.DTOs.ReviewsDto;
 global using Microsoft.AspNetCore.RateLimiting;
 global using Microsoft.AspNetCore.OutputCaching;
+global using CarAutomotive.Application.Dtos.Cart;
+global using CarAutomotive.Application.Dtos.Orders;

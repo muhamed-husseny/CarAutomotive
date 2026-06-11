@@ -1,5 +1,6 @@
-﻿using AutoMapper;
-using CarAutomotive.Core.Entities;
+﻿using CarAutomotive.Application.Dtos.Cart;
+using CarAutomotive.Core.Entities.Orders;
+
 namespace CarAutomotive.Application.Mapping
 {
     public class MappingProfiles : Profile
@@ -26,6 +27,17 @@ namespace CarAutomotive.Application.Mapping
                         ImageUrl = url
                     })));
             CreateMap<Category, CategoryDto>();
+            CreateMap<ShoppingCart, CartDto>();
+            CreateMap<CartItem, CartItemDto>();
+            CreateMap<ShippingAddress, ShippingAddressDto>();
+
+            CreateMap<OrderItem, OrderItemDto>();
+
+            CreateMap<Order, OrderToReturnDto>()
+                .ForMember(
+                    d => d.Status,
+                    o => o.MapFrom(s => s.Status.ToString()));
+
         }
     }
 }

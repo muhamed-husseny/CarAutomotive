@@ -13,3 +13,5 @@ global using System.Threading.Tasks;
 global using CarAutomotive.Core.Enums;
 global using CarAutomotive.Core.Entities.Appointment;
 global using CarAutomotive.Core.Entities.Payments;
+global using CarAutomotive.Core.Entities;
+global using CarAutomotive.Core.Entities.Orders;

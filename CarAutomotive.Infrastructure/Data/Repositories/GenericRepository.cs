@@ -1,12 +1,9 @@
-﻿using CarAutomotive.Core.Common;
-using CarAutomotive.Core.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
-namespace CarAutomotive.Infrastructure.Data.Repositories
+﻿namespace CarAutomotive.Infrastructure.Data.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         private readonly ApplicationDbContext _context;
+
 
         public GenericRepository(ApplicationDbContext context)
         {
@@ -79,6 +76,12 @@ namespace CarAutomotive.Infrastructure.Data.Repositories
         public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
         {
             return await GetAllWithSpecAsync(spec);
+        }
+        public async Task<IReadOnlyList<T>> GetAllWithSpecTrackedAsync( ISpecification<T> spec)
+        {
+            return await SpecificationEvaluator<T>
+                .GetQuery(_context.Set<T>(), spec)
+                .ToListAsync();
         }
     }
 }

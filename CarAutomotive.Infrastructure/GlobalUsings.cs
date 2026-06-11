@@ -28,3 +28,4 @@ global using CarAutomotive.Core.DTOs.AppointmentsDto;
 global using CarAutomotive.Core.Enums;
 global using CarAutomotive.Core.DTOs.ReviewsDto;
 global using CarAutomotive.Core.Entities.Payments;
+global using CarAutomotive.Core.Entities.Orders;
