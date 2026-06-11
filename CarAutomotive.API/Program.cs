@@ -1,4 +1,6 @@
+
 #region Configure Service
+using CarAutomotive.Infrastructure.Data.DataSeeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,11 +13,18 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
         o => o.UseNetTopologySuite());
+});
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<MappingProfiles>();
 });
 
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
@@ -59,6 +68,9 @@ builder.Services.AddOutputCache(options =>
     options.AddPolicy("Cache5Mins", cacheBuilder =>
         cacheBuilder.Expire(TimeSpan.FromMinutes(5)));
 });
+builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateProductDtoValidator>();
 #endregion
 
 var app = builder.Build();
@@ -78,8 +90,11 @@ app.UseHttpsRedirection();
 app.UseRateLimiter();
 app.UseOutputCache();
 
-app.UseAuthentication();
+app.UseStaticFiles();
+
 app.UseAuthorization();
+
+app.UseAuthentication();
 
 app.MapControllers();
 
@@ -89,9 +104,13 @@ var loggerFactory = services.GetRequiredService<ILoggerFactory>();
 
 try
 {
+
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
 
+
     await dbContext.Database.MigrateAsync();
+
+    await StoreContextSeed.SeedAsync(dbContext);
 
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
 
@@ -100,7 +119,6 @@ try
 
     await CarAutomotive.Infrastructure.Data.DataSeeds.StoreContextSeed.AppIdentityDbContextSeed.SeedUsersAsync(userManager);
 
-    await CarAutomotive.Infrastructure.Data.DataSeeds.MechanicContextSeed.SeedAsync(dbContext, userManager);
 }
 catch (Exception ex)
 {

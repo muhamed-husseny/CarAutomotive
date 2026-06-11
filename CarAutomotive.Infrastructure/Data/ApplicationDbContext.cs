@@ -1,13 +1,21 @@
-﻿using CarAutomotive.Infrastructure.Data.Config;
+﻿using CarAutomotive.Core.Entities;
+using CarAutomotive.Infrastructure.Data.Config;
 using CarAutomotive.Core.Entities.Payments;
 
 namespace CarAutomotive.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
         {
         }
+
+        public DbSet<Product> Products { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
+
+        public DbSet<ProductImage> ProductImages { get; set; }
 
         public DbSet<MechanicProfile> MechanicProfiles { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
@@ -20,6 +28,7 @@ namespace CarAutomotive.Infrastructure.Data
             base.OnModelCreating(builder);
 
             builder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
+
             builder.ApplyConfigurationsFromAssembly(typeof(MechanicProfileConfiguration).Assembly);
         }
 
@@ -36,6 +45,7 @@ namespace CarAutomotive.Infrastructure.Data
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
                 }
             }
+
             return base.SaveChangesAsync(cancellationToken);
         }
     }

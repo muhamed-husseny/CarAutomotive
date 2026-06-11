@@ -1,4 +1,8 @@
-﻿global using AutoMapper;
+﻿global using FluentValidation;
+global using CarAutomotive.Application.Dtos;
+global using AutoMapper;
+global using CarAutomotive.Core.Entities;
+global using CarAutomotive.Core.Interfaces;
 global using CarAutomotive.Core.DTOs.MechanicDtos;
 global using CarAutomotive.Core.Entities.Mechanic;
 global using CarAutomotive.Core.DTOs.AppointmentsDto;
