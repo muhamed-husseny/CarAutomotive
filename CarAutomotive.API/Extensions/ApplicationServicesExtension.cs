@@ -12,6 +12,8 @@
 
             services.AddScoped<IReviewService, ReviewService>();
 
+            services.AddScoped<IPaymentService, StripePaymentService>();
+
             services.AddAutoMapper(config => config.AddMaps(typeof(MechanicMappingProfile).Assembly)); services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

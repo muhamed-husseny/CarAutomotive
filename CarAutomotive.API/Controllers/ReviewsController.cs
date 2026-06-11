@@ -14,6 +14,7 @@
        
         [Authorize]
         [HttpPost]
+        [EnableRateLimiting("StrictPolicy")]
         public async Task<ActionResult> AddReview(CreateReviewDto dto)
         {
            
@@ -24,6 +25,7 @@
         }
 
         [HttpGet("mechanic/{mechanicId}")]
+        [OutputCache(PolicyName = "Cache5Mins")]
         public async Task<ActionResult<IReadOnlyList<ReviewDto>>> GetMechanicReviews(Guid mechanicId)
         {
             var reviews = await _reviewService.GetMechanicReviewsAsync(mechanicId);

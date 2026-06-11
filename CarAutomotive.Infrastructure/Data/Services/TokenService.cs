@@ -3,31 +3,41 @@
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _config;
+        private readonly UserManager<AppUser> _userManager; 
 
-        public TokenService(IConfiguration config)
+        public TokenService(IConfiguration config, UserManager<AppUser> userManager)
         {
             _config = config;
+            _userManager = userManager;
         }
 
-        public string CreateToken(AppUser user)
+        public async Task<string> CreateToken(AppUser user)
         {
-            
             var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
-
             var creds = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256Signature);
+
             var claims = new List<Claim>
             {
               new Claim(ClaimTypes.Email, user.Email),
               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             };
+
+           
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(15), 
+                Expires = DateTime.UtcNow.AddMinutes(15),
                 SigningCredentials = creds,
                 Issuer = _config["Token:Issuer"],
                 Audience = _config["Token:Audience"]
             };
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
@@ -52,7 +62,7 @@
                 ValidIssuer = _config["Token:Issuer"],
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"])),
-                ValidateLifetime = false 
+                ValidateLifetime = false
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
