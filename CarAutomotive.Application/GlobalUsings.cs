@@ -7,3 +7,5 @@ global using CarAutomotive.Core.DTOs.MechanicDtos;
 global using CarAutomotive.Core.Entities.Mechanic;
 global using CarAutomotive.Core.DTOs.AppointmentsDto;
 global using CarAutomotive.Core.Entities.Appointment;
+global using CarAutomotive.Application.Dtos.Cart;
+global using CarAutomotive.Application.Dtos.Orders;

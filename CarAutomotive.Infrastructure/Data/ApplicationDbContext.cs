@@ -12,10 +12,11 @@ namespace CarAutomotive.Infrastructure.Data
         }
 
         public DbSet<Product> Products { get; set; }
-
         public DbSet<Category> Categories { get; set; }
-
         public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<MechanicProfile> MechanicProfiles { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         public DbSet<MechanicProfile> MechanicProfiles { get; set; }
         public DbSet<Appointment> Appointments { get; set; }

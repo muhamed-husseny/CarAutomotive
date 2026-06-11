@@ -27,5 +27,6 @@ namespace CarAutomotive.Core.Interfaces
         Task<T?> GetEntityWithSpec(ISpecification<T> spec);
 
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec);
+        Task<IReadOnlyList<T>> GetAllWithSpecTrackedAsync(ISpecification<T> spec);
     }
 }

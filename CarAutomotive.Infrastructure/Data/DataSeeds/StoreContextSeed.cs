@@ -1,6 +1,4 @@
 ﻿using CarAutomotive.Core.Entities;
-using System.Text.Json;
-
 namespace CarAutomotive.Infrastructure.Data.DataSeeds
 {
     public class StoreContextSeed
