@@ -1,4 +1,5 @@
 ﻿using CarAutomotive.Infrastructure.Data.Config;
+using CarAutomotive.Core.Entities.Payments;
 
 namespace CarAutomotive.Infrastructure.Data
 {
@@ -11,6 +12,7 @@ namespace CarAutomotive.Infrastructure.Data
         public DbSet<MechanicProfile> MechanicProfiles { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

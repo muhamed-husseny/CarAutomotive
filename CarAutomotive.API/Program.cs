@@ -24,6 +24,41 @@ builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddValidatorsFromAssembly(typeof(CreateMechanicProfileDtoValidator).Assembly);
+
+
+var stripeSettings = builder.Configuration.GetSection("StripeSettings");
+
+
+Stripe.StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter(policyName: "StrictPolicy", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(1); 
+        opt.PermitLimit = 5;                  
+        opt.QueueLimit = 0;                  
+    });
+
+    options.AddFixedWindowLimiter(policyName: "GeneralPolicy", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.PermitLimit = 60;                 
+        opt.QueueLimit = 2;
+    });
+
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await context.HttpContext.Response.WriteAsJsonAsync(new { message = "Too many requests. Please try again later." }, token);
+    };
+});
+
+builder.Services.AddOutputCache(options =>
+{
+    options.AddPolicy("Cache5Mins", cacheBuilder =>
+        cacheBuilder.Expire(TimeSpan.FromMinutes(5)));
+});
 #endregion
 
 var app = builder.Build();
@@ -39,6 +74,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRateLimiter();
+app.UseOutputCache();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -57,6 +95,9 @@ try
 
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
 
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    await CarAutomotive.Infrastructure.Data.DataSeeds.AppIdentityDbContextSeed.SeedAdminUserAsync(userManager, roleManager);
+
     await CarAutomotive.Infrastructure.Data.DataSeeds.StoreContextSeed.AppIdentityDbContextSeed.SeedUsersAsync(userManager);
 
     await CarAutomotive.Infrastructure.Data.DataSeeds.MechanicContextSeed.SeedAsync(dbContext, userManager);
@@ -66,6 +107,8 @@ catch (Exception ex)
     var logger = loggerFactory.CreateLogger<Program>();
     logger.LogError(ex, "An error occurred during database migration or data seeding.");
 }
+
+
 #endregion
 
 app.Run();

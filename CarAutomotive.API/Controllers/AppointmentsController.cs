@@ -12,13 +12,25 @@
         }
 
         [HttpPost]
+        [EnableRateLimiting("StrictPolicy")]
         public async Task<ActionResult<AppointmentDto>> CreateAppointment(CreateAppointmentDto dto)
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-        
-            var appointment = await _appointmentService.CreateAppointmentAsync(userId, dto);
-            return Ok(appointment);
+
+            try
+            {
+                var appointment = await _appointmentService.CreateAppointmentAsync(userId, dto);
+                return Ok(appointment);
+            }
+            catch (Exception ex) when (ex.Message.Contains("already booked"))
+            {
+                return BadRequest(new
+                {
+                    statusCode = 400,
+                    message = ex.Message
+                });
+            }
         }
 
         [HttpPut("{id}/status")]

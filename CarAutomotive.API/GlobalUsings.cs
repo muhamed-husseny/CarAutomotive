@@ -25,3 +25,5 @@ global using CarAutomotive.Infrastructure.Services;
 global using CarAutomotive.Core.DTOs.AppointmentsDto;
 global using CarAutomotive.Core.Enums;
 global using CarAutomotive.Core.DTOs.ReviewsDto;
+global using Microsoft.AspNetCore.RateLimiting;
+global using Microsoft.AspNetCore.OutputCaching;

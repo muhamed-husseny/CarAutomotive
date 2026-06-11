@@ -12,3 +12,4 @@ global using System.Linq.Expressions;
 global using System.Threading.Tasks;
 global using CarAutomotive.Core.Enums;
 global using CarAutomotive.Core.Entities.Appointment;
+global using CarAutomotive.Core.Entities.Payments;

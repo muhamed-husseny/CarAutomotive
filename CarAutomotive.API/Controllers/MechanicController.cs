@@ -1,4 +1,6 @@
-﻿namespace CarAutomotive.API.Controllers
+﻿using Microsoft.AspNetCore.OutputCaching;
+
+namespace CarAutomotive.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -12,6 +14,7 @@
         }
 
         [HttpPost]
+        [EnableRateLimiting("StrictPolicy")]
         public async Task<ActionResult<MechanicProfileDto>> CreateMechanic(CreateMechanicProfileDto dto)
         {
             var mechanic = await _mechanicService.CreateMechanicProfileAsync(dto);
@@ -37,6 +40,7 @@
         }
 
         [HttpGet]
+        [OutputCache(PolicyName = "Cache5Mins")]
         public async Task<ActionResult<IReadOnlyList<MechanicProfileDto>>> GetAllMechanics()
         {
             var mechanics = await _mechanicService.GetAllMechanicsAsync();
@@ -44,6 +48,7 @@
         }
 
         [HttpGet("city/{city}")]
+        [OutputCache(PolicyName = "Cache5Mins")]
         public async Task<ActionResult<IReadOnlyList<MechanicProfileDto>>> GetMechanicsByCity(string city)
         {
             var mechanics = await _mechanicService.GetMechanicsByCityAsync(city);
