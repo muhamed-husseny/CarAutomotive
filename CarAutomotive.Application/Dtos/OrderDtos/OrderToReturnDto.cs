@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
 
+        public Guid OrderId { get; set; }
         public decimal TotalAmount { get; set; }
 
         public string Status { get; set; } = null!;

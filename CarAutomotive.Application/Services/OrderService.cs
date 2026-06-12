@@ -19,7 +19,7 @@ namespace CarAutomotive.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<OrderToReturnDto?> CreateOrderAsync(Guid userId,CreateOrderDto dto)
+        public async Task<OrderToReturnDto?> CreateOrderAsync(Guid userId, CreateOrderDto dto)
         {
             var cart = await _cartRepository.GetShoppingCartAsync(dto.CartId);
 
@@ -88,7 +88,6 @@ namespace CarAutomotive.Application.Services
                 product.StockCount -= cartItem.Quantity;
             }
 
-
             await _unitOfWork.CompleteAsync();
 
             await _cartRepository.DeleteShoppingCartAsync(dto.CartId);
@@ -96,7 +95,7 @@ namespace CarAutomotive.Application.Services
             return _mapper.Map<OrderToReturnDto>(order);
         }
 
-        public async Task<IReadOnlyList<OrderToReturnDto>> GetOrdersForUserAsync(Guid userId,OrderStatus? status)
+        public async Task<IReadOnlyList<OrderToReturnDto>> GetOrdersForUserAsync(Guid userId, OrderStatus? status)
         {
             var spec = new OrderWithItemsSpecification(
                 userId,
@@ -109,7 +108,7 @@ namespace CarAutomotive.Application.Services
             return _mapper.Map<IReadOnlyList<OrderToReturnDto>>(orders);
         }
 
-        public async Task<OrderToReturnDto?> GetOrderByIdAsync(int orderId,Guid userId)
+        public async Task<OrderToReturnDto?> GetOrderByIdAsync(Guid orderId, Guid userId)
         {
             var spec = new OrderWithItemsSpecification(
                 orderId,
@@ -125,7 +124,7 @@ namespace CarAutomotive.Application.Services
             return _mapper.Map<OrderToReturnDto>(order);
         }
 
-        public async Task<bool> CancelOrderAsync(int orderId,Guid userId)
+        public async Task<bool> CancelOrderAsync(Guid orderId, Guid userId)
         {
             var spec = new OrderWithItemsSpecification(
                 orderId,

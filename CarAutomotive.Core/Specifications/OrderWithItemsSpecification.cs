@@ -23,9 +23,9 @@
         }
 
         public OrderWithItemsSpecification(
-            int orderId,
+            Guid orderId,
             Guid userId)
-            : base(o => o.Id == orderId && o.UserId == userId)
+            : base(o => o.OrderId == orderId && o.UserId == userId)
         {
             AddInclude(o => o.Items);
         }

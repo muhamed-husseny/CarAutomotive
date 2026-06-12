@@ -6,6 +6,9 @@
         {
             builder.HasKey(o => o.Id);
 
+            builder.Property(o => o.OrderId)
+                   .IsRequired();
+
             builder.Property(o => o.TotalAmount)
                     .HasColumnType("decimal(18,2)")
                      .IsRequired();

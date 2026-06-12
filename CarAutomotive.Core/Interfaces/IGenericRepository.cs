@@ -19,7 +19,6 @@ namespace CarAutomotive.Core.Interfaces
         void Update(T entity);
 
         void Delete(T entity);
-        // Backward compatibility for existing dev code / mechanic module
         Task<IReadOnlyList<T>> GetAll();
 
         Task<T?> GetById(Guid id);

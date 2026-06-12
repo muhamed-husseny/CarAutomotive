@@ -8,11 +8,12 @@ namespace CarAutomotive.API.Controllers
         private readonly IOrderService _orderService;
         private readonly IValidator<CreateOrderDto> _validator;
 
-        public OrdersController( IOrderService orderService,IValidator<CreateOrderDto> validator)
+        public OrdersController(IOrderService orderService, IValidator<CreateOrderDto> validator)
         {
             _orderService = orderService;
             _validator = validator;
         }
+
         [HttpPost]
         public async Task<ActionResult<OrderToReturnDto>> CreateOrder(
             [FromBody] CreateOrderDto dto)
@@ -48,9 +49,10 @@ namespace CarAutomotive.API.Controllers
             return Ok(orders);
         }
 
-        [HttpGet("{id:int}")]
+        // 🛠️ الفيكس الأول: سطر 59 (غيّرنا الـ Constraint لـ guid ونوع الـ Parameter لـ Guid)
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<OrderToReturnDto>> GetOrderById(
-            int id)
+            Guid id)
         {
             var userId = Guid.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -64,15 +66,15 @@ namespace CarAutomotive.API.Controllers
             return Ok(order);
         }
 
-        [HttpPut("{id:int}/cancel")]
+        [HttpPut("{id:guid}/cancel")]
         public async Task<ActionResult> CancelOrder(
-            int id)
+            Guid id)
         {
             var userId = Guid.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
             var result = await _orderService
-                .CancelOrderAsync(id, userId);
+                .CancelOrderAsync(id, userId); 
 
             if (!result)
                 return BadRequest();
