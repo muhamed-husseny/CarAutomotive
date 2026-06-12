@@ -23,3 +23,4 @@ global using CarAutomotive.Core.DTOs.MechanicDtos;
 global using CarAutomotive.Core.Specifications;
 global using NetTopologySuite.Geometries;
 global using System.Text.Json;
+global using CarAutomotive.Core.Entities.Orders;
