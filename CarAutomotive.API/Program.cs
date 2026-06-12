@@ -1,5 +1,6 @@
 
 #region Configure Service
+using CarAutomotive.Application.Common.Settings;
 using CarAutomotive.Infrastructure.Data.DataSeeds;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
@@ -46,10 +47,10 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+builder.Services.AddScoped<IFileStorageService, SupabaseFileStorageService>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
-
+builder.Services.Configure<SupabaseSettings>(builder.Configuration.GetSection("Supabase"));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
