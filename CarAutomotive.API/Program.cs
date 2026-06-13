@@ -1,9 +1,5 @@
 
 #region Configure Service
-using CarAutomotive.Application.Common.Settings;
-using CarAutomotive.Infrastructure.Data.DataSeeds;
-using Microsoft.OpenApi.Models;
-using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +37,6 @@ builder.Services.AddSwaggerGen(options =>
             }
         });
 });
-
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -51,6 +46,8 @@ builder.Services.AddScoped<IFileStorageService, SupabaseFileStorageService>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.Configure<SupabaseSettings>(builder.Configuration.GetSection("Supabase"));
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -69,8 +66,11 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<MappingProfiles>();
 });
 
+//builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddIdentity<AppUser, IdentityRole<Guid>>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddApplicationServices(builder.Configuration);
 
