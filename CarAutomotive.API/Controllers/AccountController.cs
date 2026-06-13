@@ -8,8 +8,12 @@
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IEmailService _emailService;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService, RoleManager<IdentityRole<Guid>> roleManager)
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService,IEmailService emailService)
+        public AccountController(
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            ITokenService tokenService,
+            RoleManager<IdentityRole<Guid>> roleManager,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -18,8 +22,6 @@
             _emailService = emailService;
         }
 
-       
-          
         [HttpPost("login")]
         public async Task<ActionResult<AppUserDto>> Login(LoginDto model)
         {
@@ -28,14 +30,13 @@
 
             if (!user.EmailConfirmed)
                 return Unauthorized("Please verify your email first.");
+
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
             if (result.Succeeded is false) return Unauthorized(new ApiResponse(401));
-
 
             var newAccessToken = await _tokenService.CreateToken(user);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
-            
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             await _userManager.UpdateAsync(user);
@@ -58,21 +59,17 @@
                 LastName = model.LastName,
                 DisplayName = model.DisplayName,
                 Email = model.Email,
-                UserName = model.Email.Split("@")[0],
-
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                PhoneNumber = model.PhoneNumber
                 PhoneNumber = model.PhoneNumber,
                 UserName = model.Email.Split("@")[0]
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
-            //if (result.Succeeded is false) return BadRequest(new ApiResponse(400));
+
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
             }
+
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
             Console.WriteLine($"RAW TOKEN: {token}");
@@ -84,6 +81,7 @@
             var verificationLink =
                         $"https://grad-project-lemon.vercel.app/verify-email" +
                         $"?email={user.Email}&token={encodedToken}";
+
             Console.WriteLine("Before Email");
             await _emailService.SendEmailAsync(user.Email!,
                 "Verify Your Email",
@@ -95,12 +93,10 @@
                     </a>
                 ");
             Console.WriteLine("After Email");
-            var newAccessToken = _tokenService.CreateToken(user);
 
             var newAccessToken = await _tokenService.CreateToken(user);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
-            
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             await _userManager.UpdateAsync(user);
@@ -127,6 +123,7 @@
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
             Console.WriteLine($"RESET TOKEN: {token}");
             Console.WriteLine($"ENCODED RESET TOKEN: {encodedToken}");
+
             var resetLink =
                     $"https://grad-project-lemon.vercel.app/reset-password" +
                     $"?email={user.Email}&token={encodedToken}";
@@ -170,28 +167,23 @@
             string accessToken = tokenRequest.AccessToken;
             string refreshToken = tokenRequest.RefreshToken;
 
-            
             var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
             var email = principal.FindFirstValue(ClaimTypes.Email);
 
             if (email is null) return BadRequest("Invalid token client");
 
-            
             var user = await _userManager.FindByEmailAsync(email);
 
             if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
                 return BadRequest("Invalid refresh token");
 
-
             var newAccessToken = await _tokenService.CreateToken(user);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
-            
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             await _userManager.UpdateAsync(user);
 
-            
             return Ok(new AppUserDto()
             {
                 Email = user.Email!,
@@ -201,14 +193,9 @@
             });
         }
 
-        [Authorize]
-        [HttpGet("secret-room")]
-        public ActionResult<string> GetSecretData()
-        {
-            return Ok("This is a secret room only for authorized users!");
-        }
+       
 
-        [Authorize(Roles = "Admin")] 
+        [Authorize(Roles = "Admin")]
         [HttpPost("register-admin")]
         public async Task<ActionResult<AppUserDto>> RegisterAdmin(RegisterDto model)
         {
@@ -217,7 +204,6 @@
                 DisplayName = model.DisplayName,
                 Email = model.Email,
                 UserName = model.Email.Split("@")[0],
-
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 PhoneNumber = model.PhoneNumber
@@ -226,7 +212,6 @@
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded is false) return BadRequest(new ApiResponse(400));
 
-            
             if (!await _roleManager.RoleExistsAsync("Admin"))
             {
                 await _roleManager.CreateAsync(new IdentityRole<Guid>("Admin"));
@@ -251,7 +236,7 @@
         }
 
         [HttpGet("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(string email,string token)
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -264,7 +249,7 @@
 
             Console.WriteLine($"DECODED TOKEN: {token}");
 
-            var decodedToken = Encoding.UTF8.GetString( WebEncoders.Base64UrlDecode(token));
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
 
             var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
 
@@ -273,6 +258,5 @@
 
             return Ok("Email verified successfully");
         }
-
     }
 }
