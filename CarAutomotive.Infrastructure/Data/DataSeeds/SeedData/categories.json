@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Brakes",
+    "description": "Brake system parts and accessories"
+  },
+  {
+    "name": "Engine",
+    "description": "Engine components and spare parts"
+  },
+  {
+    "name": "Tires",
+    "description": "Car tires and wheel accessories"
+  },
+  {
+    "name": "Electrical",
+    "description": "Electrical and lighting components"
+  },
+  {
+    "name": "Suspension",
+    "description": "Suspension and steering parts"
+  }
+]
