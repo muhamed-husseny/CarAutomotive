@@ -15,3 +15,4 @@ global using CarAutomotive.Core.Entities.Appointment;
 global using CarAutomotive.Core.Entities.Payments;
 global using CarAutomotive.Core.Entities;
 global using CarAutomotive.Core.Entities.Orders;
+global using System.ComponentModel.DataAnnotations;
