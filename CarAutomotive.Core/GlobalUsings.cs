@@ -12,3 +12,4 @@ global using System.Linq.Expressions;
 global using System.Threading.Tasks;
 global using CarAutomotive.Core.Entities;
 global using CarAutomotive.Core.Entities.Orders;
+global using System.ComponentModel.DataAnnotations;
