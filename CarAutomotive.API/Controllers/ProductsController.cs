@@ -1,4 +1,6 @@
-﻿namespace CarAutomotive.API.Controllers
+﻿using CarAutomotive.API.Helpers;
+
+namespace CarAutomotive.API.Controllers
 {
     public class ProductsController : BaseApiController
     {
@@ -15,6 +17,7 @@
         }
 
         // GET: /api/products
+        [Cached(600)]
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductDto>>> GetProducts([FromQuery] ProductFilterDto filter)
         {
