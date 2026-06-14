@@ -19,21 +19,37 @@
                
                 await _next(context);
             }
+            catch (BadRequestException ex)
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+                var response = new ApiResponse(400, ex.Message);
+
+                var json = JsonSerializer.Serialize(response,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    });
+
+                await context.Response.WriteAsync(json);
+            }
             catch (Exception ex)
             {
-                
                 _logger.LogError(ex, ex.Message);
+
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-                
-                
                 var response = _env.IsDevelopment()
-                    ? new ApiException((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace?.ToString())
-                    : new ApiException((int)HttpStatusCode.InternalServerError);
+                    ? new ApiException(500, ex.Message, ex.StackTrace)
+                    : new ApiException(500);
 
-                var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-                var json = JsonSerializer.Serialize(response, options);
+                var json = JsonSerializer.Serialize(response,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    });
 
                 await context.Response.WriteAsync(json);
             }

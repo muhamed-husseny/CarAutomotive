@@ -7,13 +7,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Data\Migrations\**" />
+	  <EmbeddedResource Remove="Data\Migrations\**" />
+	  <None Remove="Data\Migrations\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\CarAutomotive.Application\CarAutomotive.Application.csproj" />
 		<ProjectReference Include="..\CarAutomotive.Core\CarAutomotive.Core.csproj" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\Migrations\" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.1.1" />

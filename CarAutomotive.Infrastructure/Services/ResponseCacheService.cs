@@ -3,10 +3,13 @@ namespace CarAutomotive.Infrastructure.Services
 {
     public class ResponseCacheService : IResponseCacheService
     {
+        private readonly IConnectionMultiplexer _redis;
         private readonly IDatabase _database;
 
-        public ResponseCacheService(IConnectionMultiplexer redis)
+        public ResponseCacheService(
+            IConnectionMultiplexer redis)
         {
+            _redis = redis;
             _database = redis.GetDatabase();
         }
 
@@ -28,6 +31,19 @@ namespace CarAutomotive.Infrastructure.Services
            return cachedResponse;
         }
 
-        
+        public async Task RemoveCacheResponseAsync(string pattern)
+        {
+            var server = _redis.GetServer(
+                _redis.GetEndPoints().First());
+
+            var keys = server.Keys(pattern: $"{pattern}*").ToArray();
+            if (!keys.Any())
+                return;
+            foreach (var key in keys)
+            {
+                await _database.KeyDeleteAsync(key);
+            }
+        }
+        }
     }
 }

@@ -9,11 +9,13 @@ namespace CarAutomotive.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IFileStorageService _fileStorageService;
-        public ProductService(IUnitOfWork unitOfWork, IMapper mapper, IFileStorageService fileStorageService)
+        private readonly IResponseCacheService _cacheService;
+        public ProductService(IUnitOfWork unitOfWork, IMapper mapper, IFileStorageService fileStorageService, IResponseCacheService cacheService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _fileStorageService = fileStorageService;
+            _cacheService = cacheService;
         }
 
         public async Task<Pagination<ProductDto>> GetProductsAsync(ProductFilterDto filter)
@@ -73,7 +75,7 @@ namespace CarAutomotive.Application.Services
             _unitOfWork.Repository<Product>().Add(product);
 
             await _unitOfWork.CompleteAsync();
-
+            await _cacheService.RemoveCacheResponseAsync("/api/products");
             var spec = new ProductsWithCategorySpec(product.Id);
 
             var createdProduct = await _unitOfWork
@@ -99,7 +101,7 @@ namespace CarAutomotive.Application.Services
             _unitOfWork.Repository<Product>().Update(product);
 
             await _unitOfWork.CompleteAsync();
-
+            await _cacheService.RemoveCacheResponseAsync("/api/products");
             return _mapper.Map<ProductDto>(product);
         }
 
@@ -115,7 +117,7 @@ namespace CarAutomotive.Application.Services
             _unitOfWork.Repository<Product>().Delete(product);
 
             await _unitOfWork.CompleteAsync();
-
+            await _cacheService.RemoveCacheResponseAsync("/api/products");
             return true;
         }
 
@@ -139,7 +141,7 @@ namespace CarAutomotive.Application.Services
             _unitOfWork.Repository<ProductImage>().Add(productImage);
 
             await _unitOfWork.CompleteAsync();
-
+            await _cacheService.RemoveCacheResponseAsync("/api/products");
             return imageUrl;
         }
 
@@ -154,8 +156,9 @@ namespace CarAutomotive.Application.Services
 
             await _fileStorageService.DeleteFileAsync(productImage.ImageUrl);
             _unitOfWork.Repository<ProductImage>().Delete(productImage);
-
             await _unitOfWork.CompleteAsync();
+            await _cacheService.RemoveCacheResponseAsync("/api/products");
+
             return true;
         }
     }

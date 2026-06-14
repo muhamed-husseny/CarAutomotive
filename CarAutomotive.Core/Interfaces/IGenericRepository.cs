@@ -1,6 +1,4 @@
-﻿using CarAutomotive.Core.Common;
-
-namespace CarAutomotive.Core.Interfaces
+﻿namespace CarAutomotive.Core.Interfaces
 {
     public interface IGenericRepository<T> where T : BaseEntity
     {

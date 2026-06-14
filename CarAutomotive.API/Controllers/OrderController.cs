@@ -51,8 +51,7 @@ namespace CarAutomotive.API.Controllers
 
         
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<OrderToReturnDto>> GetOrderById(
-            Guid id)
+        public async Task<ActionResult<OrderToReturnDto>> GetOrderById(Guid id)
         {
             var userId = Guid.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -67,8 +66,7 @@ namespace CarAutomotive.API.Controllers
         }
 
         [HttpPut("{id:guid}/cancel")]
-        public async Task<ActionResult> CancelOrder(
-            Guid id)
+        public async Task<ActionResult> CancelOrder(Guid id)
         {
             var userId = Guid.Parse(
                 User.FindFirstValue(ClaimTypes.NameIdentifier)!);

@@ -37,7 +37,7 @@ namespace CarAutomotive.API.Controllers
 
             return Ok(product);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductDto dto)
         {
@@ -47,6 +47,7 @@ namespace CarAutomotive.API.Controllers
             return Ok(product);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ProductDto>> UpdateProduct(int id, UpdateProductDto dto)
         {
@@ -57,6 +58,7 @@ namespace CarAutomotive.API.Controllers
             return Ok(product);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
@@ -67,6 +69,8 @@ namespace CarAutomotive.API.Controllers
 
             return NoContent();
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("{id:int}/images")]
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<string>> UploadProductImage(int id, IFormFile file)
@@ -78,6 +82,8 @@ namespace CarAutomotive.API.Controllers
 
             return Ok(imageUrl);
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{productId:int}/images/{imageId:int}")]
         public async Task<ActionResult> DeleteProductImage(int productId, int imageId)
         {
