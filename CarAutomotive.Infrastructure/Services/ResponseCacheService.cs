@@ -47,3 +47,4 @@ namespace CarAutomotive.Infrastructure.Services
             await _database.KeyDeleteAsync(keys);
         }
     }
+}
