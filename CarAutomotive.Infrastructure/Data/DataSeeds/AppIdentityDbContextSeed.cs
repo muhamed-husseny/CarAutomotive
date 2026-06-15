@@ -22,7 +22,8 @@
                     FirstName = "Super",
                     LastName = "Admin",
                     Email = "admin2@carautomotive.com",
-                    UserName = "admin2"
+                    UserName = "admin2",
+                    EmailConfirmed = true
                 };
 
                 var result = await userManager.CreateAsync(adminUser, "AdminPassword123!@#");

@@ -1,4 +1,6 @@
-﻿namespace CarAutomotive.API.Controllers
+﻿using CarAutomotive.API.Helpers;
+
+namespace CarAutomotive.API.Controllers
 {
     public class ProductsController : BaseApiController
     {
@@ -15,6 +17,7 @@
         }
 
         // GET: /api/products
+        [Cached(600)]
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductDto>>> GetProducts([FromQuery] ProductFilterDto filter)
         {
@@ -34,7 +37,7 @@
 
             return Ok(product);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductDto dto)
         {
@@ -44,6 +47,7 @@
             return Ok(product);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ProductDto>> UpdateProduct(int id, UpdateProductDto dto)
         {
@@ -54,6 +58,7 @@
             return Ok(product);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
@@ -64,6 +69,8 @@
 
             return NoContent();
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("{id:int}/images")]
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<string>> UploadProductImage(int id, IFormFile file)
@@ -75,6 +82,8 @@
 
             return Ok(imageUrl);
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{productId:int}/images/{imageId:int}")]
         public async Task<ActionResult> DeleteProductImage(int productId, int imageId)
         {
