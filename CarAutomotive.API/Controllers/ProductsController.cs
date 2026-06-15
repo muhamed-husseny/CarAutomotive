@@ -18,6 +18,7 @@ namespace CarAutomotive.API.Controllers
 
         // GET: /api/products
         [Cached(600)]
+        [EnableRateLimiting("GeneralPolicy")]
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductDto>>> GetProducts([FromQuery] ProductFilterDto filter)
         {
@@ -27,6 +28,7 @@ namespace CarAutomotive.API.Controllers
         }
 
         // GET: /api/products/{id}
+        [EnableRateLimiting("GeneralPolicy")]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ProductDto>> GetProductById(int id)
         {
