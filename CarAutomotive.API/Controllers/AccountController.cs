@@ -21,6 +21,8 @@
             _roleManager = roleManager;
             _emailService = emailService;
         }
+
+        [EnableRateLimiting("StrictPolicy")]
         [HttpPost("login")]
         public async Task<ActionResult<AppUserDto>> Login(LoginDto model)
         {
@@ -29,13 +31,13 @@
             if (user is null)
                 return Unauthorized("Invalid email or password");
 
-            var result = await _signInManager.CheckPasswordSignInAsync(
-                user,
-                model.Password,
-                false);
+            var result = await _signInManager.CheckPasswordSignInAsync( user,model.Password,false);
 
             if (!result.Succeeded)
                 return Unauthorized("Invalid email or password");
+
+            if (!user.EmailConfirmed)
+                return Unauthorized("Please verify your email first.");
 
             var newAccessToken = await _tokenService.CreateToken(user);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
@@ -54,6 +56,7 @@
             });
         }
 
+        [EnableRateLimiting("StrictPolicy")]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto model)
         {
@@ -102,6 +105,7 @@
             });
         }
 
+        [EnableRateLimiting("StrictPolicy")]
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto model)
         {
@@ -130,6 +134,7 @@
             return Ok("Password reset email sent.");
         }
 
+        [EnableRateLimiting("StrictPolicy")]
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
         {
@@ -176,6 +181,7 @@
             return Ok(new { Message = "Logged out successfully" });
         }
 
+        [EnableRateLimiting("StrictPolicy")]
         [HttpPost("refresh-token")]
         public async Task<ActionResult<AppUserDto>> RefreshToken(TokenRequestDto tokenRequest)
         {
@@ -210,6 +216,7 @@
             });
         }
 
+        [EnableRateLimiting("StrictPolicy")]
         [Authorize(Roles = "Admin")]
         [HttpPost("register-admin")]
         public async Task<ActionResult<AppUserDto>> RegisterAdmin(RegisterDto model)
