@@ -6,15 +6,16 @@
         {
             
         }
-        public Order(Guid userId,ShippingAddress shippingAddress,decimal totalAmount, ICollection<OrderItem> items)
+        public Order(Guid userId, ShippingAddress shippingAddress, decimal totalAmount, ICollection<OrderItem> items)
         {
+            OrderId = Guid.NewGuid();
             UserId = userId;
             ShippingAddress = shippingAddress;
             TotalAmount = totalAmount;
             Items = items;
             OrderDate = DateTime.UtcNow;
         }
-
+        public Guid OrderId { get; set; }
         public Guid UserId { get; set; }
         public ShippingAddress ShippingAddress { get; set; } = null!;
         public decimal TotalAmount { get; set; }

@@ -5,6 +5,9 @@ namespace CarAutomotive.Core.DTOs.MechanicDtos
     public class MechanicProfileDto
     {
         [Required]
+        public Guid Id { get; set; }
+
+        [Required]
         public Guid UserId { get; set; } 
 
         [Required, MaxLength(100)]
@@ -21,5 +24,8 @@ namespace CarAutomotive.Core.DTOs.MechanicDtos
 
         [Required]
         public double Longitude { get; set; }
+
+        public double AverageRating { get; set; } = 0;
+        public int TotalReviews { get; set; } = 0;
     }
 }

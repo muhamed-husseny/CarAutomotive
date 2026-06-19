@@ -19,7 +19,8 @@ namespace CarAutomotive.Core.Entities.Mechanic
         public int YearsOfExperience { get; set; }
         public bool IsAvailable { get; set; } = true; 
 
-        
+
+     
         public ICollection<MechanicService> Services { get; set; } = new List<MechanicService>();
     }
 }

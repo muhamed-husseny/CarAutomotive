@@ -1,7 +1,11 @@
-﻿namespace CarAutomotive.Core.Common
+﻿namespace CarAutomotive.Core.Entities
 {
-    public abstract class BaseEntity
+    public class BaseEntity<TId>
     {
-        public int Id { get; set; }
+        public TId Id { get; set; } = default!;
+    }
+
+    public class BaseEntity : BaseEntity<int>
+    {
     }
 }

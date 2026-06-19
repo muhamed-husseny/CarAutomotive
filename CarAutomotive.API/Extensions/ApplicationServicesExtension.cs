@@ -4,9 +4,17 @@
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            services.AddSingleton<IResponseCacheService, ResponseCacheService>();
+
             services.AddScoped<ITokenService, TokenService>();
 
             services.AddScoped<IMechanicService, MechanicProfileService>();
+
+            services.AddScoped<IAppointmentService, AppointmentService>();
+
+            services.AddScoped<IReviewService, ReviewService>();
+
+            services.AddScoped<IPaymentService, StripePaymentService>();
 
             services.AddAutoMapper(config => config.AddMaps(typeof(MechanicMappingProfile).Assembly)); services.AddAuthentication(options =>
             {

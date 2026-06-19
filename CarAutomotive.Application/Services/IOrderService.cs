@@ -1,4 +1,5 @@
 ﻿using CarAutomotive.Core.Entities.Orders;
+
 namespace CarAutomotive.Application.Services
 {
     public interface IOrderService
@@ -12,11 +13,11 @@ namespace CarAutomotive.Application.Services
             OrderStatus? status);
 
         Task<OrderToReturnDto?> GetOrderByIdAsync(
-            int orderId,
+            Guid orderId, 
             Guid userId);
 
         Task<bool> CancelOrderAsync(
-            int orderId,
+            Guid orderId, 
             Guid userId);
     }
 }

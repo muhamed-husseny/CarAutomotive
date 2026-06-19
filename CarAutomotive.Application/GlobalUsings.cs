@@ -5,5 +5,8 @@ global using CarAutomotive.Core.Entities;
 global using CarAutomotive.Core.Interfaces;
 global using CarAutomotive.Core.DTOs.MechanicDtos;
 global using CarAutomotive.Core.Entities.Mechanic;
+global using CarAutomotive.Core.DTOs.AppointmentsDto;
+global using CarAutomotive.Core.Entities.Appointment;
 global using CarAutomotive.Application.Dtos.Cart;
 global using CarAutomotive.Application.Dtos.Orders;
+global using System.ComponentModel.DataAnnotations;
