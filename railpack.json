@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "provider": "dotnet",
+
+  "build": {
+    "commands": [
+      "dotnet restore CarAutomotive.sln",
+      "dotnet publish CarAutomotive.API/CarAutomotive.API.csproj -c Release -o out"
+    ]
+  },
+
+  "deploy": {
+    "startCommand": "ASPNETCORE_URLS=http://0.0.0.0:$PORT ./out/CarAutomotive.API"
+  }
+}
