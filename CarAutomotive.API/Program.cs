@@ -1,4 +1,4 @@
-
+using Microsoft.AspNetCore.HttpOverrides;
 #region Configure Service
 
 var builder = WebApplication.CreateBuilder(args);
@@ -117,18 +117,25 @@ builder.Services.AddValidatorsFromAssemblyContaining<CreateProductDtoValidator>(
 #endregion
 
 var app = builder.Build();
-
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto
+});
 app.UseMiddleware<ExceptionMiddleware>();
 
 #region Configure Kestrel Middlewares
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
 
-app.UseHttpsRedirection();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "CarAutomotive API V1");
+});
+
+
+//app.UseHttpsRedirection();
 
 app.UseRateLimiter();
 app.UseOutputCache();
