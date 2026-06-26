@@ -1,9 +1,8 @@
-﻿using CarAutomotive.Core.Entities;
-namespace CarAutomotive.Infrastructure.Data.Config
+﻿namespace CarAutomotive.Infrastructure.Data.Config
 {
     internal class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
-        public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Product> builder)
+        public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.HasKey(p => p.Id); // Primary key configuration
 

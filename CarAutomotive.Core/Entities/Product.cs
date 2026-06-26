@@ -11,5 +11,7 @@
         public Category Category { get; set; } = null!; // Navigation property for related Category
         public ICollection<ProductImage> ProductImages { get; set; } = new HashSet<ProductImage>(); // Navigation property for related ProductImages 
 
+        public int BrandId { get; set; } // Fk TO Brand
+        public Brand Brand { get; set; } = null!; // Navigation property for related Brand
     }
 }
