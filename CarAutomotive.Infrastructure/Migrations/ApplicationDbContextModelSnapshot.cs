@@ -157,6 +157,9 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid?>("MechanicId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -197,6 +200,8 @@ namespace CarAutomotive.Infrastructure.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MechanicId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -284,6 +289,37 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.HasIndex("MechanicProfileId");
 
                     b.ToTable("MechanicService");
+                });
+
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Merchants", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CommercialRegister")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShopName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId")
+                        .IsUnique();
+
+                    b.ToTable("Merchants");
                 });
 
             modelBuilder.Entity("CarAutomotive.Core.Entities.Orders.Order", b =>
@@ -610,6 +646,15 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Identity.AppUser", b =>
+                {
+                    b.HasOne("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", "Mechanic")
+                        .WithMany()
+                        .HasForeignKey("MechanicId");
+
+                    b.Navigation("Mechanic");
+                });
+
             modelBuilder.Entity("CarAutomotive.Core.Entities.Mechanic.MechanicService", b =>
                 {
                     b.HasOne("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", "MechanicProfile")
@@ -619,6 +664,17 @@ namespace CarAutomotive.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("MechanicProfile");
+                });
+
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Merchants", b =>
+                {
+                    b.HasOne("CarAutomotive.Core.Entities.Identity.AppUser", "AppUser")
+                        .WithOne("Merchant")
+                        .HasForeignKey("CarAutomotive.Core.Entities.Merchants", "AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
                 });
 
             modelBuilder.Entity("CarAutomotive.Core.Entities.Orders.Order", b =>
@@ -747,6 +803,11 @@ namespace CarAutomotive.Infrastructure.Migrations
             modelBuilder.Entity("CarAutomotive.Core.Entities.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Identity.AppUser", b =>
+                {
+                    b.Navigation("Merchant");
                 });
 
             modelBuilder.Entity("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", b =>

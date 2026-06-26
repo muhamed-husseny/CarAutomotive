@@ -1,26 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CarAutomotive.Core.DTOs
+﻿public class RegisterDto
 {
-    public class RegisterDto
-    {
-        [Required]
-        public string FirstName { get; set; }
-
-        [Required]
-        public string LastName { get; set; }
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        public string DisplayName { get; set; }
-
-        [Required]
-        public string PhoneNumber { get; set; }
-
-        [Required]
-        public string Password { get; set; }
-    }
+    public string FirstName { get; set; } 
+    public string LastName { get; set; } 
+    public string DisplayName { get; set; } 
+    public string Email { get; set; }
+    public string Password { get; set; }
+    public string PhoneNumber { get; set; } 
+    public string Role { get; set; }
+    public string? BusinessName { get; set; }
+    public string? CommercialRegister { get; set; }
 }

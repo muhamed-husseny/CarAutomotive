@@ -1,4 +1,7 @@
-﻿namespace CarAutomotive.API.Controllers
+﻿using CarAutomotive.Core.Entities;
+using CarAutomotive.Core.Entities.Mechanic;
+
+namespace CarAutomotive.API.Controllers
 {
     public class AccountController : BaseApiController
     {
@@ -7,19 +10,26 @@
         private readonly ITokenService _tokenService;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IEmailService _emailService;
-
+        private readonly IGenericRepository<Merchants> _merchantRepo;
+        private readonly IGenericRepository<MechanicProfile> _mechanicRepo;
+        private readonly IUnitOfWork _unitOfWork;
         public AccountController(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             ITokenService tokenService,
             RoleManager<IdentityRole<Guid>> roleManager,
-            IEmailService emailService)
+            IEmailService emailService, IGenericRepository<Merchants> merchantRepo,
+            IGenericRepository<MechanicProfile> mechanicRepo,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _roleManager = roleManager;
             _emailService = emailService;
+            _merchantRepo = merchantRepo;
+            _mechanicRepo = mechanicRepo;
+            _unitOfWork = unitOfWork;
         }
 
         [EnableRateLimiting("StrictPolicy")]
@@ -71,38 +81,42 @@
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded) return BadRequest(result.Errors);
 
-            if (!result.Succeeded)
+         
+            var roleResult = await _userManager.AddToRoleAsync(user, model.Role);
+            if (!roleResult.Succeeded) return BadRequest("Failed to assign role.");
+
+            if (model.Role == "Merchant")
             {
-                return BadRequest(result.Errors);
+                var merchant = new Merchants
+                {
+                    AppUserId = user.Id,
+                    ShopName = model.BusinessName, 
+                    Status = "PENDING VETTING"    
+                };
+                _merchantRepo.Add(merchant);
+                await _unitOfWork.CompleteAsync();
+            }
+            else if (model.Role == "Mechanic")
+            {
+                var mechanic = new MechanicProfile
+                {
+                    UserId = user.Id,
+                    Name = model.BusinessName,
+                    IsAvailable = false 
+                };
+                _mechanicRepo.Add(mechanic);
+                await _unitOfWork.CompleteAsync();
             }
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-            Console.WriteLine($"RAW TOKEN: {token}");
-
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+            var verificationLink = $"https://grad-project-lemon.vercel.app/verify-email?email={user.Email}&token={encodedToken}";
 
+            await _emailService.SendEmailAsync(user.Email!, "Verify Your Email", $"<a href='{verificationLink}'>Verify</a>");
 
-            var verificationLink =
-                        $"https://grad-project-lemon.vercel.app/verify-email" +
-                        $"?email={user.Email}&token={encodedToken}";
-
-            await _emailService.SendEmailAsync(user.Email!,
-                "Verify Your Email",
-                $@"
-                    <h2>Welcome To CarAutomotive</h2>
-                    <p>Please verify your email by clicking the link below:</p>
-                    <a href='{verificationLink}'>
-                        Verify Email
-                    </a>
-                ");
-            Console.WriteLine("After Email");
-
-            return Ok(new
-            {
-                Message = "Registration successful. Please verify your email."
-            });
+            return Ok(new { Message = "Registration successful. Please verify your email." });
         }
 
         [EnableRateLimiting("StrictPolicy")]

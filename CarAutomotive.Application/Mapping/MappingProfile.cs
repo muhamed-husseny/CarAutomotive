@@ -1,5 +1,4 @@
-﻿using CarAutomotive.Application.Dtos.Cart;
-using CarAutomotive.Core.Entities.Orders;
+﻿using CarAutomotive.Core.Entities.Orders;
 
 namespace CarAutomotive.Application.Mapping
 {

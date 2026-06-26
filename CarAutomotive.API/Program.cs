@@ -1,6 +1,8 @@
 
 #region Configure Service
 
+using System.IdentityModel.Tokens.Jwt;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -48,7 +50,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.Configure<SupabaseSettings>(builder.Configuration.GetSection("Supabase"));
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
-
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -111,8 +113,6 @@ builder.Services.AddOutputCache(options =>
     options.AddPolicy("Cache5Mins", cacheBuilder =>
         cacheBuilder.Expire(TimeSpan.FromMinutes(5)));
 });
-builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
-
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProductDtoValidator>();
 #endregion
 
@@ -171,6 +171,7 @@ catch (Exception ex)
     logger.LogError(ex, "An error occurred during database migration or data seeding.");
 }
 
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 #endregion
 
