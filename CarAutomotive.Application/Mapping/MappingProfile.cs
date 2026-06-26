@@ -9,6 +9,10 @@ namespace CarAutomotive.Application.Mapping
             CreateMap<Product, ProductDto>()
                 .ForMember(d => d.CategoryName,
                     o => o.MapFrom(s => s.Category.Name))
+
+                .ForMember(d => d.BrandName,
+                    o => o.MapFrom(s => s.Brand.Name))
+
                 .ForMember(d => d.ProductImages,
                     o => o.MapFrom(s => s.ProductImages.Select(pi => pi.ImageUrl).ToList()));
 
@@ -26,6 +30,7 @@ namespace CarAutomotive.Application.Mapping
                         ImageUrl = url
                     })));
             CreateMap<Category, CategoryDto>();
+            CreateMap<Brand, BrandDto>();
             CreateMap<ShoppingCart, CartDto>();
             CreateMap<CartItem, CartItemDto>();
             CreateMap<ShippingAddress, ShippingAddressDto>();

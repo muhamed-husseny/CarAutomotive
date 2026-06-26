@@ -39,11 +39,15 @@ namespace CarAutomotive.API.Helpers
         private string GenerateCacheKeyFromRequest(HttpRequest request)
         {
             var keyBuilder = new StringBuilder();
-            keyBuilder.Append($"{request.Path}");
+
+            keyBuilder.Append(request.Path.ToString().ToLower());
+
             foreach (var (key, value) in request.Query.OrderBy(x => x.Key))
             {
-                keyBuilder.Append(request.Path.ToString().ToLower());
+                if (!string.IsNullOrWhiteSpace(value))
+                    keyBuilder.Append($"|{key.ToLower()}-{value}");
             }
+
             return keyBuilder.ToString();
         }
     }

@@ -20,14 +20,16 @@ namespace CarAutomotive.Application.Services
 
         public async Task<Pagination<ProductDto>> GetProductsAsync(ProductFilterDto filter)
         {
+
             var spec = new ProductsWithCategorySpec(
-                filter.Sort,
-                filter.CategoryId,
-                filter.MinPrice,
-                filter.MaxPrice,
-                filter.Search,
-                filter.PageIndex,
-                filter.PageSize);
+                    filter.Sort,
+                    filter.CategoryId,
+                    filter.BrandId,
+                    filter.MinPrice,
+                    filter.MaxPrice,
+                    filter.Search,
+                    filter.PageIndex,
+                    filter.PageSize);
 
             var products = await _unitOfWork
                 .Repository<Product>()
@@ -37,6 +39,7 @@ namespace CarAutomotive.Application.Services
 
             var countSpec = new ProductsWithFilterForCountSpec(
                 filter.CategoryId,
+                filter.BrandId,
                 filter.MinPrice,
                 filter.MaxPrice,
                 filter.Search);

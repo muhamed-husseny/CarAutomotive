@@ -1,5 +1,4 @@
-﻿using CarAutomotive.Core.Entities;
-using CarAutomotive.Core.Entities.Mechanic;
+﻿using CarAutomotive.Core.Entities.Mechanic;
 
 namespace CarAutomotive.API.Controllers
 {
@@ -9,7 +8,7 @@ namespace CarAutomotive.API.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ITokenService _tokenService;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-        private readonly IEmailService _emailService;
+        //private readonly IEmailService _emailService;
         private readonly IGenericRepository<Merchants> _merchantRepo;
         private readonly IGenericRepository<MechanicProfile> _mechanicRepo;
         private readonly IUnitOfWork _unitOfWork;
@@ -17,8 +16,9 @@ namespace CarAutomotive.API.Controllers
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             ITokenService tokenService,
-            RoleManager<IdentityRole<Guid>> roleManager,
-            IEmailService emailService, IGenericRepository<Merchants> merchantRepo,
+            RoleManager<IdentityRole<Guid>> roleManager
+            //IEmailService emailService
+            , IGenericRepository<Merchants> merchantRepo,
             IGenericRepository<MechanicProfile> mechanicRepo,
             IUnitOfWork unitOfWork)
         {
@@ -26,6 +26,10 @@ namespace CarAutomotive.API.Controllers
             _signInManager = signInManager;
             _tokenService = tokenService;
             _roleManager = roleManager;
+            //_emailService = emailService;
+            _merchantRepo = merchantRepo;
+            _mechanicRepo = mechanicRepo;
+            _unitOfWork = unitOfWork;
         }
 
         [EnableRateLimiting("StrictPolicy")]
@@ -82,7 +86,7 @@ namespace CarAutomotive.API.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded) return BadRequest(result.Errors);
 
-         
+
             var roleResult = await _userManager.AddToRoleAsync(user, model.Role);
             if (!roleResult.Succeeded) return BadRequest("Failed to assign role.");
 
@@ -91,8 +95,8 @@ namespace CarAutomotive.API.Controllers
                 var merchant = new Merchants
                 {
                     AppUserId = user.Id,
-                    ShopName = model.BusinessName, 
-                    Status = "PENDING VETTING"    
+                    ShopName = model.BusinessName,
+                    Status = "PENDING VETTING"
                 };
                 _merchantRepo.Add(merchant);
                 await _unitOfWork.CompleteAsync();
@@ -103,38 +107,17 @@ namespace CarAutomotive.API.Controllers
                 {
                     UserId = user.Id,
                     Name = model.BusinessName,
-                    IsAvailable = false 
+                    IsAvailable = false
                 };
                 _mechanicRepo.Add(mechanic);
                 await _unitOfWork.CompleteAsync();
             }
 
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            var verificationLink = $"https://grad-project-lemon.vercel.app/verify-email?email={user.Email}&token={encodedToken}";
-
-            await _emailService.SendEmailAsync(user.Email!, "Verify Your Email", $"<a href='{verificationLink}'>Verify</a>");
-
-            return Ok(new { Message = "Registration successful. Please verify your email." });
-            var verificationLink =
-                        $"https://grad-project-lemon.vercel.app/verify-email" +
-                        $"?email={user.Email}&token={encodedToken}";
-
-            await _emailService.SendEmailAsync(user.Email!,
-                "Verify Your Email",
-                $@"
-                    <h2>Welcome To CarAutomotive</h2>
-                    <p>Please verify your email by clicking the link below:</p>
-                    <a href='{verificationLink}'>
-                        Verify Email
-                    </a>
-                ");
-            Console.WriteLine("After Email");
-
             return Ok(new
             {
-                Message = "Registration successful. Please verify your email."
+                Message = "Registration successful."
             });
+            
         }
         [EnableRateLimiting("StrictPolicy")]
         [HttpPost("forgot-password")]

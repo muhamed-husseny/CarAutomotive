@@ -1,6 +1,7 @@
 
 #region Configure Service
 
+using Resend;
 using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,16 +44,18 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFileStorageService, SupabaseFileStorageService>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.Configure<SupabaseSettings>(builder.Configuration.GetSection("Supabase"));
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddScoped<IEmailService, EmailService>();
+//builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+//builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 
-builder.Services.AddTransient<IResend, ResendClient>();
+//builder.Services.AddHttpClient<IResend, ResendClient>();
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -158,7 +161,6 @@ try
     await dbContext.Database.MigrateAsync();
 
     await StoreContextSeed.SeedAsync(dbContext);
-
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
 
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();

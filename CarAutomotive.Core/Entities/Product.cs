@@ -9,9 +9,11 @@
         public DateTime CreatedDate { get; set; }
         public int CategoryId { get; set; } // Fk TO Category 
         public Category Category { get; set; } = null!; // Navigation property for related Category
+        public ICollection<Compatibility> Compatibilities { get; set; } = new HashSet<Compatibility>();
         public ICollection<ProductImage> ProductImages { get; set; } = new HashSet<ProductImage>(); // Navigation property for related ProductImages 
 
-        public int BrandId { get; set; } // Fk TO Brand
-        public Brand Brand { get; set; } = null!; // Navigation property for related Brand
+        public int BrandId { get; set; }
+
+        public Brand Brand { get; set; } = null!;
     }
 }

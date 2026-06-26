@@ -26,6 +26,11 @@
                    .WithMany(c => c.Products)
                    .HasForeignKey(p => p.CategoryId) // Set the foreign key for the relationship
                    .OnDelete(DeleteBehavior.Restrict); // Configure delete behavior to restrict deletion of a category if it has related products
+            builder.HasOne(p => p.Brand)
+                    .WithMany(b => b.Products)
+                    .HasForeignKey(p => p.BrandId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

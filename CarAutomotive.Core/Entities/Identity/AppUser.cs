@@ -16,5 +16,6 @@
 
         public MechanicProfile? Mechanic { get; set; }
         public Merchants? Merchant { get; set; }
+        public ICollection<Vehicle> Vehicles { get; set; } = new HashSet<Vehicle>();
     }
 }
