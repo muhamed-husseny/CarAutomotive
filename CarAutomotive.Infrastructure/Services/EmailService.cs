@@ -1,13 +1,14 @@
-﻿namespace CarAutomotive.Infrastructure.Services
+﻿using Resend;
+
+namespace CarAutomotive.Infrastructure.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly EmailSettings _settings;
+        private readonly IResend _resend;
 
-        public EmailService(
-            IOptions<EmailSettings> options)
+        public EmailService(IResend resend)
         {
-            _settings = options.Value;
+            _resend = resend;
         }
 
         public async Task SendEmailAsync(
@@ -15,35 +16,23 @@
             string subject,
             string htmlMessage)
         {
-            var email = new MimeMessage();
-
-            email.From.Add(
-                MailboxAddress.Parse(_settings.FromEmail));
-
-            email.To.Add(
-                MailboxAddress.Parse(toEmail));
-
-            email.Subject = subject;
-
-            email.Body = new TextPart("html")
+            var message = new EmailMessage
             {
-                Text = htmlMessage
+                From = "onboarding@resend.dev",
+
+                To = [toEmail],
+
+                Subject = subject,
+
+                HtmlBody = htmlMessage
             };
 
-            using var smtp = new SmtpClient();
+            Console.WriteLine("Resend Step 1");
 
-            await smtp.ConnectAsync(
-                _settings.Host,
-                _settings.Port,
-                SecureSocketOptions.StartTls);
+            var response = await _resend.EmailSendAsync(message);
 
-            await smtp.AuthenticateAsync(
-                _settings.Username,
-                _settings.Password);
+            Console.WriteLine($"Resend Step 2 : {response}");
 
-            await smtp.SendAsync(email);
-
-            await smtp.DisconnectAsync(true);
         }
     }
 }
