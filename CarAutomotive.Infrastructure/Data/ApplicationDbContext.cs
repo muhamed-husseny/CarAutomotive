@@ -18,9 +18,15 @@
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Payment> Payments { get; set; }
 
+        public DbSet<Vehicle> Vehicles { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Vehicle>()
+                .HasOne(v => v.AppUser)
+                .WithMany()
+                .HasForeignKey(v => v.AppUserId);
 
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
