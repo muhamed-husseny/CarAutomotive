@@ -64,13 +64,14 @@ The platform allows customers to purchase automotive products, manage orders and
 
 ## Technologies
 
+- Onion Architecture
 - ASP.NET Core Web API
 - Entity Framework Core
-- SQL Server
+- PostgreSQL
 - JWT Authentication
 - AutoMapper
 - Swagger
-- Clean Architecture
+- Postman
 - Repository Pattern
 - Unit of Work Pattern
 - Specification Pattern
@@ -79,7 +80,7 @@ The platform allows customers to purchase automotive products, manage orders and
 
 ## Architecture
 
-The project follows Clean Architecture principles to ensure:
+The project follows Onion Architecture principles to ensure:
 
 - Separation of Concerns
 - Maintainability
@@ -92,18 +93,10 @@ The project follows Clean Architecture principles to ensure:
 
 ```text
 CarAutomotive.API
+CarAutomotive.Application
 CarAutomotive.Core
-CarAutomotive.Repository
-CarAutomotive.Service
+CarAutomotive.Infrastructure
 ```
-
----
-
-## API Documentation
-
-Swagger is integrated for testing and documenting all API endpoints.
-
----
 
 ## Future Improvements
 
