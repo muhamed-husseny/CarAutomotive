@@ -1,9 +1,8 @@
-﻿using CarAutomotive.Core.Entities;
-namespace CarAutomotive.Infrastructure.Data.Config
+﻿namespace CarAutomotive.Infrastructure.Data.Config
 {
     internal class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
-        public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Product> builder)
+        public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.HasKey(p => p.Id); // Primary key configuration
 
@@ -27,6 +26,11 @@ namespace CarAutomotive.Infrastructure.Data.Config
                    .WithMany(c => c.Products)
                    .HasForeignKey(p => p.CategoryId) // Set the foreign key for the relationship
                    .OnDelete(DeleteBehavior.Restrict); // Configure delete behavior to restrict deletion of a category if it has related products
+            builder.HasOne(p => p.Brand)
+                    .WithMany(b => b.Products)
+                    .HasForeignKey(p => p.BrandId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

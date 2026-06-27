@@ -10,46 +10,14 @@ namespace CarAutomotive.Application.Services
         private readonly IMapper _mapper;
         private readonly IFileStorageService _fileStorageService;
         private readonly IResponseCacheService _cacheService;
-        public ProductService(IUnitOfWork unitOfWork, IMapper mapper, IFileStorageService fileStorageService, IResponseCacheService cacheService)
+        private readonly IGenericRepository<Vehicle> _vehicleRepo;
+        public ProductService(IUnitOfWork unitOfWork, IMapper mapper, IFileStorageService fileStorageService, IResponseCacheService cacheService, IGenericRepository<Vehicle> vehicleRepo)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _fileStorageService = fileStorageService;
             _cacheService = cacheService;
-        }
-
-        public async Task<Pagination<ProductDto>> GetProductsAsync(ProductFilterDto filter)
-        {
-            var spec = new ProductsWithCategorySpec(
-                filter.Sort,
-                filter.CategoryId,
-                filter.MinPrice,
-                filter.MaxPrice,
-                filter.Search,
-                filter.PageIndex,
-                filter.PageSize);
-
-            var products = await _unitOfWork
-                .Repository<Product>()
-                .GetAllWithSpecAsync(spec);
-
-            var data = _mapper.Map<IReadOnlyList<ProductDto>>(products);
-
-            var countSpec = new ProductsWithFilterForCountSpec(
-                filter.CategoryId,
-                filter.MinPrice,
-                filter.MaxPrice,
-                filter.Search);
-
-            var count = await _unitOfWork
-                .Repository<Product>()
-                .CountAsync(countSpec);
-
-            return new Pagination<ProductDto>(
-                filter.PageIndex,
-                filter.PageSize,
-                count,
-                data);
+            _vehicleRepo = vehicleRepo;
         }
 
         public async Task<ProductDto?> GetProductByIdAsync(int id)
@@ -150,7 +118,7 @@ namespace CarAutomotive.Application.Services
             var productImage = await _unitOfWork
                .Repository<ProductImage>()
                .GetByIdAsync(imageId);
-            
+
             if (productImage?.ImageUrl == null || productImage.ProductId != productId)
                 return false;
 
@@ -160,6 +128,82 @@ namespace CarAutomotive.Application.Services
             await _cacheService.RemoveCacheResponseAsync("/api/products");
 
             return true;
+        }
+        public async Task<Pagination<ProductDto>> GetProductsAsync(
+    ProductFilterDto filter,
+    Guid? userId = null)
+        {
+            var spec = new ProductsWithCategorySpec(
+                filter.Sort,
+                filter.CategoryId,
+                filter.BrandId,
+                filter.MinPrice,
+                filter.MaxPrice,
+                filter.Search,
+                filter.PageIndex,
+                filter.PageSize);
+
+            var products = await _unitOfWork
+                .Repository<Product>()
+                .GetAllWithSpecAsync(spec);
+
+            var data = _mapper.Map<List<ProductDto>>(products);
+
+
+            if (userId.HasValue)
+            {
+                var vehicles = await _unitOfWork
+                    .Repository<Vehicle>()
+                    .ListAsync(
+                        new UserVehiclesSpecification(
+                            userId.Value));
+
+
+                foreach (var product in data)
+                {
+                    product.IsCompatible = vehicles.Any(v =>
+
+                        product.Compatibilities.Any(c =>
+
+                            string.Equals(
+                                c.Make,
+                                v.Make,
+                                StringComparison.OrdinalIgnoreCase)
+
+                            &&
+
+                            string.Equals(
+                                c.Model,
+                                v.Model,
+                                StringComparison.OrdinalIgnoreCase)
+
+                            &&
+
+                            c.Year == v.Year
+                        ));
+                }
+            }
+
+
+            var countSpec =
+                new ProductsWithFilterForCountSpec(
+                    filter.CategoryId,
+                    filter.BrandId,
+                    filter.MinPrice,
+                    filter.MaxPrice,
+                    filter.Search);
+
+
+            var count = await _unitOfWork
+                .Repository<Product>()
+                .CountAsync(countSpec);
+
+
+            return new Pagination<ProductDto>(
+                filter.PageIndex,
+                filter.PageSize,
+                count,
+                data);
         }
     }
 }

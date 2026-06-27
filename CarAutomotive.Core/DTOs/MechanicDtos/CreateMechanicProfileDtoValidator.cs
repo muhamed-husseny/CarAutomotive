@@ -4,9 +4,7 @@
     {
         public CreateMechanicProfileDtoValidator()
         {
-            RuleFor(x => x.UserId)
-                .NotEmpty().WithMessage("User number is required");
-
+            
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("The mechanic's name is required")
                 .MaximumLength(100).WithMessage("The name must not exceed 100 characters");

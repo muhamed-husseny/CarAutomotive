@@ -35,9 +35,9 @@
             }
         }
 
-        public static async Task SeedUsersAsync(UserManager<AppUser> userManager)
+        public static Task SeedUsersAsync(UserManager<AppUser> userManager)
         {
-            
+            return Task.CompletedTask;
         }
     }
 }

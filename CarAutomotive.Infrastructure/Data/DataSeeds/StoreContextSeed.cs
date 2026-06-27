@@ -1,5 +1,4 @@
-﻿using CarAutomotive.Core.Entities;
-namespace CarAutomotive.Infrastructure.Data.DataSeeds
+﻿namespace CarAutomotive.Infrastructure.Data.DataSeeds
 {
     public class StoreContextSeed
     {
@@ -44,6 +43,26 @@ namespace CarAutomotive.Infrastructure.Data.DataSeeds
                     await context.SaveChangesAsync();
                 }
             }
+            if (!await context.Brands.AnyAsync())
+            {
+                var brandsData = await File.ReadAllTextAsync(
+                    "../CarAutomotive.Infrastructure/Data/DataSeeds/SeedData/brands.json");
+
+                var brands = JsonSerializer.Deserialize<List<Brand>>(
+                brandsData,
+                 new JsonSerializerOptions
+                 {
+                     PropertyNameCaseInsensitive = true
+                 });
+
+                if (brands != null && brands.Count > 0)
+                {
+                    await context.Brands.AddRangeAsync(brands);
+
+                    await context.SaveChangesAsync();
+                }
+
+            }
 
             if (!await context.Products.AnyAsync())
             {
@@ -63,6 +82,8 @@ namespace CarAutomotive.Infrastructure.Data.DataSeeds
                     await context.SaveChangesAsync();
                 }
             }
+           
+
         }
     }
 }

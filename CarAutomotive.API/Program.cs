@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.HttpOverrides;
 #region Configure Service
 
+using Resend;
+using System.IdentityModel.Tokens.Jwt;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -41,13 +44,18 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IFileStorageService, SupabaseFileStorageService>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.Configure<SupabaseSettings>(builder.Configuration.GetSection("Supabase"));
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddScoped<IEmailService, EmailService>();
+//builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+//builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<ICompatibilityService, CompatibilityService>();
+
+//builder.Services.AddHttpClient<IResend, ResendClient>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -111,8 +119,6 @@ builder.Services.AddOutputCache(options =>
     options.AddPolicy("Cache5Mins", cacheBuilder =>
         cacheBuilder.Expire(TimeSpan.FromMinutes(5)));
 });
-builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
-
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProductDtoValidator>();
 #endregion
 
@@ -163,7 +169,6 @@ try
     await dbContext.Database.MigrateAsync();
 
     await StoreContextSeed.SeedAsync(dbContext);
-
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
 
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
@@ -178,6 +183,7 @@ catch (Exception ex)
     logger.LogError(ex, "An error occurred during database migration or data seeding.");
 }
 
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 #endregion
 

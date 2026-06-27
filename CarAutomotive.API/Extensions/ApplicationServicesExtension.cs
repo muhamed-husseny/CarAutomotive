@@ -32,7 +32,8 @@
                     ValidIssuer = config["Token:Issuer"],
                     ValidateAudience = true,
                     ValidAudience = config["Token:Audience"],
-                    ValidateLifetime = true
+                    ValidateLifetime = true,
+                    RoleClaimType = ClaimTypes.Role
                 };
             });
 

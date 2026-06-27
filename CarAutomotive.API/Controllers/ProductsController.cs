@@ -7,22 +7,34 @@ namespace CarAutomotive.API.Controllers
         private readonly IProductService _productService;
         private readonly IValidator<CreateProductDto> _createProductValidator;
         private readonly IValidator<UpdateProductDto> _updateProductValidator;
-        public ProductsController(IProductService productService,
-                                  IValidator<CreateProductDto> createProductValidator,
-                                  IValidator<UpdateProductDto> updateProductValidator)
+        private readonly UserManager<AppUser> _userManager;
+        public ProductsController(IProductService productService, IValidator<CreateProductDto> createProductValidator,IValidator<UpdateProductDto> updateProductValidator, UserManager<AppUser> userManager)
         {
             _productService = productService;
             _createProductValidator = createProductValidator;
             _updateProductValidator = updateProductValidator;
+            _userManager = userManager;
         }
 
         // GET: /api/products
         [Cached(600)]
         [EnableRateLimiting("GeneralPolicy")]
         [HttpGet]
-        public async Task<ActionResult<Pagination<ProductDto>>> GetProducts([FromQuery] ProductFilterDto filter)
+        public async Task<ActionResult<Pagination<ProductDto>>>
+GetProducts([FromQuery] ProductFilterDto filter)
         {
-            var products = await _productService.GetProductsAsync(filter);
+            Guid? userId = null;
+
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                userId = Guid.Parse(
+                    User.FindFirstValue(
+                        ClaimTypes.NameIdentifier)!);
+            }
+
+            var products =
+                await _productService
+                    .GetProductsAsync(filter, userId);
 
             return Ok(products);
         }
@@ -96,5 +108,6 @@ namespace CarAutomotive.API.Controllers
 
             return NoContent();
         }
+
     }
 }

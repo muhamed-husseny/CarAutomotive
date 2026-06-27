@@ -1,8 +1,4 @@
-﻿using CarAutomotive.Core.Common;
-using CarAutomotive.Core.Interfaces;
-using Microsoft.EntityFrameworkCore;
-
-namespace CarAutomotive.Infrastructure.Data
+﻿namespace CarAutomotive.Infrastructure.Data
 {
     public class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
     {

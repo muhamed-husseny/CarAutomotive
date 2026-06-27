@@ -22,6 +22,9 @@
 
             RuleForEach(p => p.ImageUrls)
                 .NotEmpty().WithMessage("Image URL cannot be empty.");
+            RuleFor(p => p.BrandId)
+                .GreaterThan(0)
+                .WithMessage("BrandId must be greater than 0.");
         }
     }
 }
