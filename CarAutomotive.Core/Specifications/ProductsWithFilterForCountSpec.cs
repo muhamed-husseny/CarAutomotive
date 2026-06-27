@@ -14,7 +14,7 @@ namespace CarAutomotive.Core.Specifications
                 (!brandId.HasValue || p.BrandId == brandId.Value) &&
                 (!minPrice.HasValue || p.Price >= minPrice.Value) &&
                 (!maxPrice.HasValue || p.Price <= maxPrice.Value) &&
-                (string.IsNullOrEmpty(search) || p.Name.ToLower().Contains(search.ToLower()))
+                (string.IsNullOrEmpty(search)|| p.Name.ToLower().Contains(search.ToLower())|| p.Brand.Name.ToLower().Contains(search.ToLower()))
             )
         {
         }

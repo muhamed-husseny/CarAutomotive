@@ -134,6 +134,38 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Compatibility", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Make")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId", "Make", "Model", "Year")
+                        .IsUnique();
+
+                    b.ToTable("Compatibilities");
+                });
+
             modelBuilder.Entity("CarAutomotive.Core.Entities.Identity.AppUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -516,27 +548,31 @@ namespace CarAutomotive.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Make")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("Mileage")
                         .HasColumnType("integer");
 
                     b.Property<string>("Model")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("PlateCode")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("PlateNumber")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<int>("Year")
                         .HasColumnType("integer");
@@ -716,6 +752,17 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Compatibility", b =>
+                {
+                    b.HasOne("CarAutomotive.Core.Entities.Product", "Product")
+                        .WithMany("Compatibilities")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("CarAutomotive.Core.Entities.Identity.AppUser", b =>
                 {
                     b.HasOne("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", "Mechanic")
@@ -830,7 +877,7 @@ namespace CarAutomotive.Infrastructure.Migrations
             modelBuilder.Entity("CarAutomotive.Core.Entities.Vehicle", b =>
                 {
                     b.HasOne("CarAutomotive.Core.Entities.Identity.AppUser", "AppUser")
-                        .WithMany()
+                        .WithMany("Vehicles")
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -902,6 +949,8 @@ namespace CarAutomotive.Infrastructure.Migrations
             modelBuilder.Entity("CarAutomotive.Core.Entities.Identity.AppUser", b =>
                 {
                     b.Navigation("Merchant");
+
+                    b.Navigation("Vehicles");
                 });
 
             modelBuilder.Entity("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", b =>
@@ -916,6 +965,8 @@ namespace CarAutomotive.Infrastructure.Migrations
 
             modelBuilder.Entity("CarAutomotive.Core.Entities.Product", b =>
                 {
+                    b.Navigation("Compatibilities");
+
                     b.Navigation("ProductImages");
                 });
 #pragma warning restore 612, 618

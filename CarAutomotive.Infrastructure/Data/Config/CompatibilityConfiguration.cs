@@ -1,5 +1,4 @@
-﻿
-namespace CarAutomotive.Infrastructure.Data.Config
+﻿namespace CarAutomotive.Infrastructure.Data.Config
 {
     internal class CompatibilityConfiguration : IEntityTypeConfiguration<Compatibility>
     {
@@ -19,6 +18,13 @@ namespace CarAutomotive.Infrastructure.Data.Config
                    .IsRequired();
             builder.Property(c => c.Year)
                     .IsRequired();
+            builder.HasIndex(c => new
+            {
+                c.ProductId,
+                c.Make,
+                c.Model,
+                c.Year
+            }).IsUnique();
         }
     }
 }

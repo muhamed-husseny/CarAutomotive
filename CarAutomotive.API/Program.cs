@@ -53,6 +53,7 @@ builder.Services.Configure<SupabaseSettings>(builder.Configuration.GetSection("S
 //builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 //builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<ICompatibilityService, CompatibilityService>();
 
 //builder.Services.AddHttpClient<IResend, ResendClient>();
 
