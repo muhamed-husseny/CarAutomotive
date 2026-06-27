@@ -9,7 +9,12 @@
         public int StockCount { get; set; }
         public DateTime CreatedDate { get; set; }
         public int CategoryId { get; set; } 
-        public String CategoryName { get; set; } = null!; 
-        public List<String> ProductImages { get; set; } = new (); 
+        public String CategoryName { get; set; } = null!;
+        public int BrandId { get; set; }
+        public string BrandName { get; set; } = null!;
+        public bool IsCompatible { get; set; }
+        public List<String> ProductImages { get; set; } = new ();
+
+        public List<CompatibilityDto> Compatibilities { get; set; } = new();
     }
 }

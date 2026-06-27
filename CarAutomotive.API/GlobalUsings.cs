@@ -27,7 +27,7 @@ global using CarAutomotive.Application.Mapping;
 global using CarAutomotive.Application.Services;
 global using CarAutomotive.Infrastructure.Services;
 global using CarAutomotive.Core.DTOs.MechanicDtos;
-global using CarAutomotive.Core.MappingProfiles;
+global using CarAutomotive.Application.MappingProfiles;
 global using CarAutomotive.Infrastructure.Data.Services;
 global using CarAutomotive.Infrastructure.Services;
 global using CarAutomotive.Core.DTOs.AppointmentsDto;

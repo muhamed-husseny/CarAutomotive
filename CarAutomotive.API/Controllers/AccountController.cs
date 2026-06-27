@@ -1,4 +1,6 @@
-﻿namespace CarAutomotive.API.Controllers
+﻿using CarAutomotive.Core.Entities.Mechanic;
+
+namespace CarAutomotive.API.Controllers
 {
     public class AccountController : BaseApiController
     {
@@ -6,20 +8,28 @@
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ITokenService _tokenService;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-        private readonly IEmailService _emailService;
-
+        //private readonly IEmailService _emailService;
+        private readonly IGenericRepository<Merchants> _merchantRepo;
+        private readonly IGenericRepository<MechanicProfile> _mechanicRepo;
+        private readonly IUnitOfWork _unitOfWork;
         public AccountController(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             ITokenService tokenService,
-            RoleManager<IdentityRole<Guid>> roleManager,
-            IEmailService emailService)
+            RoleManager<IdentityRole<Guid>> roleManager
+            //IEmailService emailService
+            , IGenericRepository<Merchants> merchantRepo,
+            IGenericRepository<MechanicProfile> mechanicRepo,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _roleManager = roleManager;
-            _emailService = emailService;
+            //_emailService = emailService;
+            _merchantRepo = merchantRepo;
+            _mechanicRepo = mechanicRepo;
+            _unitOfWork = unitOfWork;
         }
 
         [EnableRateLimiting("StrictPolicy")]
@@ -31,13 +41,14 @@
             if (user is null)
                 return Unauthorized("Invalid email or password");
 
-            var result = await _signInManager.CheckPasswordSignInAsync( user,model.Password,false);
+            var result = await _signInManager.CheckPasswordSignInAsync(
+                user,
+                model.Password,
+                false);
 
             if (!result.Succeeded)
                 return Unauthorized("Invalid email or password");
 
-            if (!user.EmailConfirmed)
-                return Unauthorized("Please verify your email first.");
 
             var newAccessToken = await _tokenService.CreateToken(user);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
@@ -67,44 +78,47 @@
                 DisplayName = model.DisplayName,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                UserName = model.Email.Split("@")[0]
+                UserName = model.Email.Split("@")[0],
+
+                EmailConfirmed = true
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded) return BadRequest(result.Errors);
 
-            if (!result.Succeeded)
+
+            var roleResult = await _userManager.AddToRoleAsync(user, model.Role);
+            if (!roleResult.Succeeded) return BadRequest("Failed to assign role.");
+
+            if (model.Role == "Merchant")
             {
-                return BadRequest(result.Errors);
+                var merchant = new Merchants
+                {
+                    AppUserId = user.Id,
+                    ShopName = model.BusinessName,
+                    Status = "PENDING VETTING"
+                };
+                _merchantRepo.Add(merchant);
+                await _unitOfWork.CompleteAsync();
             }
-
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-            Console.WriteLine($"RAW TOKEN: {token}");
-
-            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-
-
-            var verificationLink =
-                        $"https://grad-project-lemon.vercel.app/verify-email" +
-                        $"?email={user.Email}&token={encodedToken}";
-
-            await _emailService.SendEmailAsync(user.Email!,
-                "Verify Your Email",
-                $@"
-                    <h2>Welcome To CarAutomotive</h2>
-                    <p>Please verify your email by clicking the link below:</p>
-                    <a href='{verificationLink}'>
-                        Verify Email
-                    </a>
-                ");
-            Console.WriteLine("After Email");
+            else if (model.Role == "Mechanic")
+            {
+                var mechanic = new MechanicProfile
+                {
+                    UserId = user.Id,
+                    Name = model.BusinessName,
+                    IsAvailable = false
+                };
+                _mechanicRepo.Add(mechanic);
+                await _unitOfWork.CompleteAsync();
+            }
 
             return Ok(new
             {
-                Message = "Registration successful. Please verify your email."
+                Message = "Registration successful."
             });
+            
         }
-
         [EnableRateLimiting("StrictPolicy")]
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto model)
@@ -112,28 +126,25 @@
             var user = await _userManager.FindByEmailAsync(model.Email);
 
             if (user == null)
-                return Ok("If the email exists, a reset link has been sent.");
+                return Ok("If the email exists, a reset link has been generated.");
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            Console.WriteLine($"RESET TOKEN: {token}");
-            Console.WriteLine($"ENCODED RESET TOKEN: {encodedToken}");
 
-            var resetLink =
-                    $"https://grad-project-lemon.vercel.app/reset-password" +
-                    $"?email={user.Email}&token={encodedToken}";
+            var token =
+                await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            await _emailService.SendEmailAsync(
-                user.Email!,
-                "Reset Your Password",
-                $@"<h2>CarAutomotive Password Reset</h2>
-                   <p>Click the link below to reset your password:</p>
-                   <a href='{resetLink}'>Reset Password</a>");
 
-            return Ok("Password reset email sent.");
+            var encodedToken =
+                WebEncoders.Base64UrlEncode(
+                    Encoding.UTF8.GetBytes(token));
+
+
+            return Ok(new
+            {
+                Email = user.Email,
+                Token = encodedToken
+            });
         }
-
         [EnableRateLimiting("StrictPolicy")]
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
@@ -257,28 +268,28 @@
             });
         }
 
-        [HttpGet("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(string email, string token)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user == null)
-                return BadRequest("User not found");
-
-            Console.WriteLine($"TOKEN FROM URL: {token}");
-
-            token = WebUtility.UrlDecode(token);
-
-            Console.WriteLine($"DECODED TOKEN: {token}");
-
-            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
-
-            var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
-
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-
-            return Ok("Email verified successfully");
-        }
+        //[HttpGet("confirm-email")]
+        //public async Task<IActionResult> ConfirmEmail(string email, string token)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(email);
+        //
+        //    if (user == null)
+        //        return BadRequest("User not found");
+        //
+        //    Console.WriteLine($"TOKEN FROM URL: {token}");
+        //
+        //    token = WebUtility.UrlDecode(token);
+        //
+        //    Console.WriteLine($"DECODED TOKEN: {token}");
+        //
+        //    var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+        //
+        //    var result = await _userManager.ConfirmEmailAsync(user, decodedToken);
+        //
+        //    if (!result.Succeeded)
+        //        return BadRequest(result.Errors);
+        //
+        //    return Ok("Email verified successfully");
+        //}
     }
 }
