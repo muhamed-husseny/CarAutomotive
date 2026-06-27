@@ -13,6 +13,8 @@
         public int BrandId { get; set; }
         public string BrandName { get; set; } = null!;
         public bool IsCompatible { get; set; }
-        public List<String> ProductImages { get; set; } = new (); 
+        public List<String> ProductImages { get; set; } = new ();
+
+        public List<CompatibilityDto> Compatibilities { get; set; } = new();
     }
 }

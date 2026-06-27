@@ -10,29 +10,55 @@ namespace CarAutomotive.API.Helpers
             _timeToLiveInSeconds = timeToLiveInSeconds;
         }
 
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        public async Task OnActionExecutionAsync(
+    ActionExecutingContext context,
+    ActionExecutionDelegate next)
         {
-            var responseCacheService = context.HttpContext.RequestServices.GetRequiredService<IResponseCacheService>();
-            // ask clr to inject from response cache service explicitly
-            var cacheKey = GenerateCacheKeyFromRequest(context.HttpContext.Request);
-
-            var response = await responseCacheService.GetCachedResponseAsync(cacheKey);
-
-            if(!string.IsNullOrEmpty(response))
+            if (context.HttpContext.User.Identity?.IsAuthenticated == true)
             {
-                var contentResult = new ContentResult
+                await next();
+                return;
+            }
+
+            var responseCacheService =
+                context.HttpContext.RequestServices
+                .GetRequiredService<IResponseCacheService>();
+
+
+            var cacheKey =
+                GenerateCacheKeyFromRequest(
+                    context.HttpContext.Request);
+
+
+            var response =
+                await responseCacheService
+                .GetCachedResponseAsync(cacheKey);
+
+
+            if (!string.IsNullOrEmpty(response))
+            {
+                context.Result = new ContentResult
                 {
                     Content = response,
                     ContentType = "application/json",
                     StatusCode = 200
                 };
-                context.Result = contentResult;
+
                 return;
             }
-            var executedActionContext = await next.Invoke();
-            if(executedActionContext.Result is OkObjectResult okObjectResult && okObjectResult.Value is not null)
+
+
+            var executedActionContext =
+                await next();
+
+
+            if (executedActionContext.Result is OkObjectResult okObjectResult
+                && okObjectResult.Value is not null)
             {
-                await responseCacheService.CacheResponseAsync(cacheKey, okObjectResult.Value, TimeSpan.FromSeconds(_timeToLiveInSeconds));
+                await responseCacheService.CacheResponseAsync(
+                    cacheKey,
+                    okObjectResult.Value,
+                    TimeSpan.FromSeconds(_timeToLiveInSeconds));
             }
         }
 

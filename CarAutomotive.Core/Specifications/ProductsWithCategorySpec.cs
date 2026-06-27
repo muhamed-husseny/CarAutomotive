@@ -21,6 +21,7 @@ namespace CarAutomotive.Core.Specifications
             AddInclude(p => p.Category);
             AddInclude(p => p.ProductImages);
             AddInclude(p => p.Brand);
+            AddInclude(p => p.Compatibilities);
             if (!string.IsNullOrEmpty(sort))
             {
                 switch (sort)
@@ -71,6 +72,7 @@ namespace CarAutomotive.Core.Specifications
             AddInclude(p => p.Category);
             AddInclude(p => p.ProductImages);
             AddInclude(p => p.Brand);
+            AddInclude(p => p.Compatibilities);
         }
        
     }
