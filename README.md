@@ -103,8 +103,8 @@ CarAutomotive.Infrastructure
 
 ## Future Improvements
 
-- Docker Support
-- Redis Caching
-- Unit Testing
-- CI/CD Pipeline
-- Cloud Deployment
+-   **Real-time Notifications (SignalR):** Implement WebSocket communication to provide live updates for appointment status changes and order tracking.
+-   **Background Processing (Hangfire / Quartz.NET):** Introduce background jobs for automated tasks, such as sending appointment reminders or clearing abandoned shopping carts.
+-   **Advanced Observability & Logging:** Integrate structured logging and monitoring stacks (e.g., Serilog, ELK Stack, or Prometheus/Grafana) for better system health tracking.
+-   **Microservices Evolution:** Gradually decouple the E-commerce and Mechanic domains into independent microservices to scale them separately based on traffic demands.
+-   **Comprehensive Testing Suite:** Expand the testing strategy to include Integration Testing for database queries and End-to-End (E2E) testing for critical business flows.
