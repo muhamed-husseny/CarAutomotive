@@ -4,6 +4,9 @@ CarAutomotive is a full-featured automotive platform that combines an e-commerce
 
 The platform allows customers to purchase automotive products, manage orders and payments, and request repair services from nearby mechanics based on location and ratings.
 
+<img width="1821" height="871" alt="image" src="https://github.com/user-attachments/assets/edb5a641-110b-4e40-911b-73d4c430c7ad" />
+
+
 ---
 
 ## Features
