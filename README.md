@@ -1,6 +1,6 @@
 # CarAutomotive Platform
 
-CarAutomotive is a full-featured automotive platform that combines an e-commerce marketplace for car spare parts with an on-demand mechanic service system.
+Is a full-featured automotive platform that combines an e-commerce marketplace for car spare parts with an on-demand mechanic service system.
 
 The platform allows customers to purchase automotive products, manage orders and payments, and request repair services from nearby mechanics based on location and ratings.
 
