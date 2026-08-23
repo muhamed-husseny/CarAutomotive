@@ -9,6 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+
+builder.Services.AddCors(opts => opts.AddPolicy("DevPolicy",
+    b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection"));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -140,6 +148,7 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "CarAutomotive API V1");
 });
 
+app.UseCors("DevPolicy");
 
 //app.UseHttpsRedirection();
 
@@ -156,32 +165,11 @@ app.UseAuthorization(); // must be Authentication then Authorization
 
 app.MapControllers();
 
+app.MapHealthChecks("/health");
+
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-
-try
-{
-
-    var dbContext = services.GetRequiredService<ApplicationDbContext>();
-
-
-    await dbContext.Database.MigrateAsync();
-
-    await StoreContextSeed.SeedAsync(dbContext);
-    var userManager = services.GetRequiredService<UserManager<AppUser>>();
-
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
-    await CarAutomotive.Infrastructure.Data.DataSeeds.AppIdentityDbContextSeed.SeedAdminUserAsync(userManager, roleManager);
-
-    await CarAutomotive.Infrastructure.Data.DataSeeds.StoreContextSeed.AppIdentityDbContextSeed.SeedUsersAsync(userManager);
-
-}
-catch (Exception ex)
-{
-    var logger = loggerFactory.CreateLogger<Program>();
-    logger.LogError(ex, "An error occurred during database migration or data seeding.");
-}
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
