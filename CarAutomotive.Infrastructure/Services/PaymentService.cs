@@ -131,7 +131,7 @@ namespace CarAutomotive.Infrastructure.Services
             _unitOfWork.Repository<Payment>().Update(payment);
 
             // 2. Update Order status
-            order.Status = OrderStatus.Confirmed;
+            order.Status = OrderStatus.Processing;
             order.FulfillmentStatus = "PROCESSING";
             _unitOfWork.Repository<Order>().Update(order);
 

@@ -14,7 +14,7 @@ namespace CarAutomotive.API.Extensions
 
             services.AddScoped<IReviewService, ReviewService>();
 
-            services.AddScoped<IPaymentService, StripePaymentService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
             services.AddScoped<IVehicleService, VehicleService>();
 
