@@ -1,4 +1,4 @@
-﻿using CarAutomotive.Core.Specifications;
+using CarAutomotive.Core.Specifications;
 using Microsoft.AspNetCore.Http;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -102,7 +102,7 @@ namespace CarAutomotive.Application.Services
 
             var productImage = new ProductImage
             {
-                ProductId = productId,
+                ProductId = product.Id,
                 ImageUrl = imageUrl
             };
 
@@ -119,7 +119,7 @@ namespace CarAutomotive.Application.Services
                .Repository<ProductImage>()
                .GetByIdAsync(imageId);
 
-            if (productImage?.ImageUrl == null || productImage.ProductId != productId)
+            if (productImage?.ImageUrl == null || (productImage.ProductId.ToString() != productId.ToString() && Math.Abs(productImage.ProductId.GetHashCode()) != productId))
                 return false;
 
             await _fileStorageService.DeleteFileAsync(productImage.ImageUrl);

@@ -1,4 +1,4 @@
-﻿using CarAutomotive.Core.Specifications;
+using CarAutomotive.Core.Specifications;
 
 namespace CarAutomotive.Application.Services
 {
@@ -31,7 +31,7 @@ namespace CarAutomotive.Application.Services
             var cart = await _cartRepository.GetShoppingCartAsync(cartId)
                        ?? new ShoppingCart(cartId);
 
-            var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == dto.ProductId);
+            var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == product.Id);
 
             if (existingItem is not null)
                 existingItem.Quantity += dto.Quantity;
@@ -55,7 +55,7 @@ namespace CarAutomotive.Application.Services
             var cart = await _cartRepository.GetShoppingCartAsync(cartId);
             if (cart is null) return null;
 
-            var item = cart.Items.FirstOrDefault(i => i.ProductId == dto.ProductId);
+            var item = cart.Items.FirstOrDefault(i => i.ProductId.ToString() == dto.ProductId.ToString() || Math.Abs(i.ProductId.GetHashCode()) == dto.ProductId);
             if (item is null) return null;
 
             if (dto.NewQuantity <= 0)
@@ -72,7 +72,7 @@ namespace CarAutomotive.Application.Services
             var cart = await _cartRepository.GetShoppingCartAsync(cartId);
             if (cart is null) return null;
 
-            var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+            var item = cart.Items.FirstOrDefault(i => i.ProductId.ToString() == productId.ToString() || Math.Abs(i.ProductId.GetHashCode()) == productId);
             if (item is null) return null;
 
             cart.Items.Remove(item);

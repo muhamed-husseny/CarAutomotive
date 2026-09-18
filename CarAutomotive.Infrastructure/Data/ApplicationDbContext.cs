@@ -1,4 +1,4 @@
-﻿namespace CarAutomotive.Infrastructure.Data
+namespace CarAutomotive.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
     {
@@ -20,6 +20,7 @@
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<WalletLedger> WalletLedgers { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

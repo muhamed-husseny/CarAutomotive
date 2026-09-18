@@ -1,6 +1,6 @@
 ﻿namespace CarAutomotive.Core.Specifications
 {
-    public class BaseSpecification<T> : ISpecification<T> where T : BaseEntity
+    public class BaseSpecification<T> : ISpecification<T> where T : class
     {
         public Expression<Func<T, bool>>? Criteria { get; private set; }
 

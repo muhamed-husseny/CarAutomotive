@@ -1,4 +1,4 @@
-﻿using CarAutomotive.Core.Entities;
+using CarAutomotive.Core.Entities;
 namespace CarAutomotive.Infrastructure.Data.Config
 {
     public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
@@ -8,6 +8,8 @@ namespace CarAutomotive.Infrastructure.Data.Config
             builder.HasKey(p=>p.Id);
             builder.Property(p=>p.ImageUrl).IsRequired()
                                             .HasMaxLength(500);
+            builder.Property(p => p.ProductId)
+                   .IsRequired();
             builder.HasOne(p => p.Product)
                    .WithMany(p => p.ProductImages)
                    .HasForeignKey(p => p.ProductId)

@@ -1,9 +1,6 @@
-using CarAutomotive.Core.Entities.Identity;
-using CarAutomotive.Core.Enums;
-
-namespace CarAutomotive.Core.Entities
+namespace CarAutomotive.Core.Dtos
 {
-    public class Vehicle : BaseEntity<Guid>
+    public class CreateVehicleDto
     {
         public string Make { get; set; } = null!;
         public string Model { get; set; } = null!;
@@ -13,13 +10,8 @@ namespace CarAutomotive.Core.Entities
         public int Mileage { get; set; }
         public string? FuelType { get; set; }
         public string? Color { get; set; }
-        public VehicleStatus Status { get; set; } = VehicleStatus.Perfect;
         public string? Vin { get; set; }
-        public string? ImageUrl { get; set; }
         public List<string> Images { get; set; } = new();
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        public Guid AppUserId { get; set; }
-        public AppUser AppUser { get; set; } = null!;
+        public string? ImageUrl { get; set; }
     }
 }

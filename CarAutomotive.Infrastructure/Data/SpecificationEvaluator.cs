@@ -1,10 +1,10 @@
 ﻿namespace CarAutomotive.Infrastructure.Data
 {
-    public class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
+    public class SpecificationEvaluator<T> where T : class
     {
-        public static IQueryable<TEntity> GetQuery(
-            IQueryable<TEntity> inputQuery,
-            ISpecification<TEntity> spec)
+        public static IQueryable<T> GetQuery(
+            IQueryable<T> inputQuery,
+            ISpecification<T> spec)
         {
             var query = inputQuery;
 

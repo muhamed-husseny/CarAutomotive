@@ -1,11 +1,21 @@
-﻿using CarAutomotive.Core.Specifications;
+using CarAutomotive.Core.Entities;
 
-public class ProductsForOrderSpecification : BaseSpecification<Product>
+namespace CarAutomotive.Core.Specifications
 {
-    public ProductsForOrderSpecification(
-        IReadOnlyList<int> productIds)
-        : base(p => productIds.Contains(p.Id))
+    public class ProductsForOrderSpecification : BaseSpecification<Product>
     {
-        AddInclude(p => p.ProductImages);
+        public ProductsForOrderSpecification(
+            IReadOnlyList<Guid> productIds)
+            : base(p => productIds.Contains(p.Id))
+        {
+            AddInclude(p => p.ProductImages);
+        }
+
+        public ProductsForOrderSpecification(
+            IReadOnlyList<int> productIds)
+            : base(p => false)
+        {
+            AddInclude(p => p.ProductImages);
+        }
     }
 }

@@ -1,5 +1,6 @@
-﻿using CarAutomotive.Core.Entities.Orders;
+using CarAutomotive.Core.Entities.Orders;
 using CarAutomotive.Core.Specifications;
+using CarAutomotive.Core.Enums;
 
 namespace CarAutomotive.Application.Services
 {
@@ -146,7 +147,7 @@ namespace CarAutomotive.Application.Services
             {
                 var product = await _unitOfWork
                     .Repository<Product>()
-                    .GetByIdAsync(item.ProductId);
+                    .GetById(item.ProductId);
 
                 if (product is not null)
                 {

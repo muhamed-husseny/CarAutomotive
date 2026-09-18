@@ -18,7 +18,7 @@
          => _context.DisposeAsync();
 
 
-        public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity
+        public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class
         {
             if(_repositories == null)
                 _repositories = new Hashtable();

@@ -1,6 +1,6 @@
 ﻿namespace CarAutomotive.Core.Interfaces
 {
-    public interface IGenericRepository<T> where T : BaseEntity
+    public interface IGenericRepository<T> where T : class
     {
         Task<T?> GetByIdAsync(int id);
 

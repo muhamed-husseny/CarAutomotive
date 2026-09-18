@@ -1,4 +1,4 @@
-﻿using CarAutomotive.Core.Entities.Orders;
+﻿using CarAutomotive.Core.Enums; 
 
 namespace CarAutomotive.Application.Services
 {
@@ -13,11 +13,11 @@ namespace CarAutomotive.Application.Services
             OrderStatus? status);
 
         Task<OrderToReturnDto?> GetOrderByIdAsync(
-            Guid orderId, 
+            Guid orderId,
             Guid userId);
 
         Task<bool> CancelOrderAsync(
-            Guid orderId, 
+            Guid orderId,
             Guid userId);
     }
 }

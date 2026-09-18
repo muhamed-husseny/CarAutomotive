@@ -1,4 +1,4 @@
-﻿namespace CarAutomotive.Application.Services
+namespace CarAutomotive.Application.Services
 {
     public class CompatibilityService : ICompatibilityService
     {
@@ -33,7 +33,7 @@
      .GetAllAsync();
 
             var result = items
-                .Where(x => x.ProductId == productId)
+                .Where(x => x.ProductId.ToString() == productId.ToString() || Math.Abs(x.ProductId.GetHashCode()) == productId)
                 .ToList();
 
             return _mapper.Map<IReadOnlyList<CompatibilityDto>>(result);
