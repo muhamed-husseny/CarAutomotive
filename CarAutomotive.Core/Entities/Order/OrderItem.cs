@@ -1,9 +1,9 @@
-﻿namespace CarAutomotive.Core.Entities.Orders
+namespace CarAutomotive.Core.Entities.Orders
 {
     public class OrderItem 
     {
         public int Id { get; set; }
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
         public string ProductName { get; set; } = null!;
         public string? ImageUrl { get; set; }
         public decimal Price { get; set; }

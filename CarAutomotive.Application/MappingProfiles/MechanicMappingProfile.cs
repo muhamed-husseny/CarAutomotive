@@ -1,4 +1,4 @@
-﻿using CarAutomotive.Core.Dtos;
+using CarAutomotive.Core.Dtos;
 using NetTopologySuite.Geometries; 
 
 namespace CarAutomotive.Application.MappingProfiles 
@@ -21,9 +21,12 @@ namespace CarAutomotive.Application.MappingProfiles
                 .ForMember(dest => dest.DistanceInMeters, opt => opt.Ignore());
 
             CreateMap<Vehicle, VehicleDto>()
-               .ForMember(dest => dest.Images, opt => opt.MapFrom(src =>
-               string.IsNullOrEmpty(src.ImageUrl) ? new List<string>() : new List<string> { src.ImageUrl }
-    ));
+                .ForMember(dest => dest.Status,
+                    opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src =>
+                    src.Images != null && src.Images.Count > 0
+                        ? src.Images
+                        : (!string.IsNullOrEmpty(src.ImageUrl) ? new List<string> { src.ImageUrl } : new List<string>())));
         }
     }
 }

@@ -2,8 +2,7 @@
 {
     public interface IUnitOfWork : IAsyncDisposable
     {
-        IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity;
-
+        IGenericRepository<TEntity> Repository<TEntity>() where TEntity : class;
         Task<int> CompleteAsync();
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace CarAutomotive.API.Extensions
+namespace CarAutomotive.API.Extensions
 {
     public static class ApplicationServicesExtension
     {
@@ -15,6 +15,8 @@
             services.AddScoped<IReviewService, ReviewService>();
 
             services.AddScoped<IPaymentService, StripePaymentService>();
+
+            services.AddScoped<IVehicleService, VehicleService>();
 
             services.AddAutoMapper(config => config.AddMaps(typeof(MechanicMappingProfile).Assembly)); services.AddAuthentication(options =>
             {

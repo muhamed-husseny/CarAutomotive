@@ -1,9 +1,14 @@
-﻿namespace CarAutomotive.Infrastructure.Data.Config
+namespace CarAutomotive.Infrastructure.Data.Config
 {
     internal class CompatibilityConfiguration : IEntityTypeConfiguration<Compatibility>
     {
         public void Configure(EntityTypeBuilder<Compatibility> builder)
         {
+            builder.HasKey(c => c.Id);
+
+            builder.Property(c => c.ProductId)
+                   .IsRequired();
+
             builder.HasOne(c => c.Product)
                    .WithMany(p => p.Compatibilities)
                    .HasForeignKey(c => c.ProductId)

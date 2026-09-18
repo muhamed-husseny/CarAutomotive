@@ -1,4 +1,4 @@
-﻿using CarAutomotive.Core.Entities;
+using CarAutomotive.Core.Entities;
 namespace CarAutomotive.Core.Specifications
 {
     public class ProductsWithCategorySpec : BaseSpecification<Product>
@@ -14,9 +14,9 @@ namespace CarAutomotive.Core.Specifications
                                         : base(p =>
                                          (!categoryId.HasValue || p.CategoryId == categoryId.Value) &&
                                          (!brandId.HasValue || p.BrandId == brandId.Value)&&
-                                         (!minPrice.HasValue || p.Price >= minPrice.Value) &&
-                                         (!maxPrice.HasValue || p.Price <= maxPrice.Value) &&
-                                         (string.IsNullOrEmpty(search)|| p.Name.ToLower().Contains(search.ToLower())|| p.Brand.Name.ToLower().Contains(search.ToLower())))
+                                         (!minPrice.HasValue || p.BasePriceEgp >= minPrice.Value) &&
+                                         (!maxPrice.HasValue || p.BasePriceEgp <= maxPrice.Value) &&
+                                         (string.IsNullOrEmpty(search)|| p.Title.ToLower().Contains(search.ToLower())|| p.Brand.Name.ToLower().Contains(search.ToLower())))
         {
             AddInclude(p => p.Category);
             AddInclude(p => p.ProductImages);
@@ -29,27 +29,27 @@ namespace CarAutomotive.Core.Specifications
 
 
                     case "priceAsc":
-                        AddOrderBy(p => p.Price);
+                        AddOrderBy(p => p.BasePriceEgp);
                         break;
 
                     case "priceDesc":
-                        AddOrderByDescending(p => p.Price);
+                        AddOrderByDescending(p => p.BasePriceEgp);
                         break;
 
                     case "nameAsc":
-                        AddOrderBy(p => p.Name);
+                        AddOrderBy(p => p.Title);
                         break;
 
                     case "nameDesc":
-                        AddOrderByDescending(p => p.Name);
+                        AddOrderByDescending(p => p.Title);
                         break;
 
                     case "stockAsc":
-                        AddOrderBy(p => p.StockCount);
+                        AddOrderBy(p => p.StockQuantity);
                         break;
 
                     case "stockDesc":
-                        AddOrderByDescending(p => p.StockCount);
+                        AddOrderByDescending(p => p.StockQuantity);
                         break;
                     case "brandAsc":
                         AddOrderBy(p => p.Brand.Name);
@@ -60,14 +60,21 @@ namespace CarAutomotive.Core.Specifications
                         break;
 
                     default:
-                        AddOrderBy(p => p.Name);
+                        AddOrderBy(p => p.Title);
                         break;
                 }
             }
             else AddOrderBy (p => p.Id);
             ApplyPagination(pageIndex, pageSize);
         }
-        public ProductsWithCategorySpec(int id) : base(p => p.Id == id) 
+        public ProductsWithCategorySpec(Guid id) : base(p => p.Id == id) 
+        {
+            AddInclude(p => p.Category);
+            AddInclude(p => p.ProductImages);
+            AddInclude(p => p.Brand);
+            AddInclude(p => p.Compatibilities);
+        }
+        public ProductsWithCategorySpec(int id) : base(p => false) 
         {
             AddInclude(p => p.Category);
             AddInclude(p => p.ProductImages);
