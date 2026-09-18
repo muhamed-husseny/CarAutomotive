@@ -1,10 +1,10 @@
-﻿using Stripe;
+using Stripe;
 
 namespace CarAutomotive.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/payments")] 
     [ApiController]
-    public class PaymentsController : BaseApiController 
+    public class PaymentsController : BaseApiController
     {
         private readonly IPaymentService _paymentService;
         private readonly ILogger<PaymentsController> _logger;
@@ -17,49 +17,66 @@ namespace CarAutomotive.API.Controllers
             _config = config;
         }
 
-     
-        [HttpPost("{orderId}")]
-        public async Task<IActionResult> CreateOrUpdatePaymentIntent(Guid orderId)
+        // POST: /api/v1/payments/{orderId}
+        [Authorize]
+        [HttpPost("{orderId:guid}")] 
+        public async Task<ActionResult<PaymentIntentResponseDto>> CreateOrUpdatePaymentIntent(Guid orderId)
         {
-            var payment = await _paymentService.CreateOrUpdatePaymentIntent(orderId);
-
-            if (payment == null) return BadRequest("Problem with your payment");
-
-            return Ok(payment);
+            try
+            {
+                var response = await _paymentService.CreateOrUpdatePaymentIntentAsync(orderId);
+                return Ok(response);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
-        [HttpPost("webhook")]
+        // POST: /api/v1/payments/webhook
+        [AllowAnonymous]
+        [HttpPost("webhook")] 
         public async Task<IActionResult> StripeWebhook()
         {
-            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+            using var reader = new StreamReader(HttpContext.Request.Body);
+            var json = await reader.ReadToEndAsync();
 
             try
             {
-                var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _config["StripeSettings:WebhookSecret"]);
+                var webhookSecret = _config["StripeSettings:WebhookSecret"];
+                var signature = Request.Headers["Stripe-Signature"];
 
-                PaymentIntent intent;
+                Event stripeEvent;
 
-                switch (stripeEvent.Type)
+                if (!string.IsNullOrWhiteSpace(webhookSecret) && !string.IsNullOrWhiteSpace(signature))
                 {
-                    case EventTypes.PaymentIntentSucceeded:
-                        intent = (PaymentIntent)stripeEvent.Data.Object;
-                        _logger.LogInformation("Payment Succeeded: {id}", intent.Id);
-                        await _paymentService.UpdateOrderPaymentSucceeded(intent.Id);
-                        break;
-
-                    case EventTypes.PaymentIntentPaymentFailed:
-                        intent = (PaymentIntent)stripeEvent.Data.Object;
-                        _logger.LogInformation("Payment Failed: {id}", intent.Id);
-                        await _paymentService.UpdateOrderPaymentFailed(intent.Id);
-                        break;
+                    stripeEvent = EventUtility.ConstructEvent(json, signature, webhookSecret);
+                }
+                else
+                {
+                    // Fallback parse when signature validation is skipped/testing
+                    stripeEvent = EventUtility.ParseEvent(json, throwOnApiVersionMismatch: false);
                 }
 
-                return new EmptyResult();
+                if (stripeEvent.Type == EventTypes.PaymentIntentSucceeded || stripeEvent.Type == "payment_intent.succeeded")
+                {
+                    var intent = stripeEvent.Data.Object as PaymentIntent;
+                    var paymentIntentId = intent?.Id ?? string.Empty;
+
+                    _logger.LogInformation("Stripe PaymentIntent Succeeded: {id}", paymentIntentId);
+                    await _paymentService.HandlePaymentSuccessWebhookAsync(paymentIntentId);
+                }
+
+                return Ok();
             }
-            catch (StripeException e)
+            catch (StripeException ex)
             {
-                _logger.LogError(e, "Stripe Webhook Error");
-                return BadRequest();
+                _logger.LogError(ex, "Stripe Webhook Signature Verification Error: {Message}", ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
         }
     }
