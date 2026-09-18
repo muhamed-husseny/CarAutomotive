@@ -63,6 +63,7 @@ builder.Services.Configure<SupabaseSettings>(builder.Configuration.GetSection("S
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICompatibilityService, CompatibilityService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IProductFitmentService, ProductFitmentService>();
 
 //builder.Services.AddHttpClient<IResend, ResendClient>();
 
