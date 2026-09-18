@@ -21,6 +21,8 @@ namespace CarAutomotive.Infrastructure.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<WalletLedger> WalletLedgers { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoicePart> InvoiceParts { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

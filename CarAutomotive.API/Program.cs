@@ -64,6 +64,7 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICompatibilityService, CompatibilityService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IProductFitmentService, ProductFitmentService>();
+builder.Services.AddScoped<IMechanicBookingService, MechanicBookingService>();
 
 //builder.Services.AddHttpClient<IResend, ResendClient>();
 
