@@ -1,16 +1,26 @@
-﻿using CarAutomotive.API.Helpers;
+using CarAutomotive.API.Helpers;
+using CarAutomotive.Core.DTOs;
+using CarAutomotive.Core.Interfaces;
 
 namespace CarAutomotive.API.Controllers
 {
     public class ProductsController : BaseApiController
     {
         private readonly IProductService _productService;
+        private readonly IProductFitmentService _fitmentService;
         private readonly IValidator<CreateProductDto> _createProductValidator;
         private readonly IValidator<UpdateProductDto> _updateProductValidator;
         private readonly UserManager<AppUser> _userManager;
-        public ProductsController(IProductService productService, IValidator<CreateProductDto> createProductValidator,IValidator<UpdateProductDto> updateProductValidator, UserManager<AppUser> userManager)
+
+        public ProductsController(
+            IProductService productService,
+            IProductFitmentService fitmentService,
+            IValidator<CreateProductDto> createProductValidator,
+            IValidator<UpdateProductDto> updateProductValidator,
+            UserManager<AppUser> userManager)
         {
             _productService = productService;
+            _fitmentService = fitmentService;
             _createProductValidator = createProductValidator;
             _updateProductValidator = updateProductValidator;
             _userManager = userManager;
@@ -109,5 +119,13 @@ GetProducts([FromQuery] ProductFilterDto filter)
             return NoContent();
         }
 
+        // POST: /api/v1/products/fitment-check
+        [HttpPost("/api/v1/products/fitment-check")]
+        [HttpPost("fitment-check")]
+        public async Task<ActionResult<FitmentResultDto>> CheckFitment([FromBody] FitmentCheckRequestDto request)
+        {
+            var result = await _fitmentService.CheckFitmentAsync(request);
+            return Ok(result);
+        }
     }
 }
