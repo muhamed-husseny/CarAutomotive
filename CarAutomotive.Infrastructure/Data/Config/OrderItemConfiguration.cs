@@ -13,6 +13,12 @@ namespace CarAutomotive.Infrastructure.Data.Config
             builder.Property(oi => oi.Price)
                    .HasColumnType("decimal(18,2)");
 
+            builder.Property(oi => oi.UnitPriceEgp)
+                   .HasColumnType("decimal(18,2)");
+
+            builder.Property(oi => oi.TotalPriceEgp)
+                   .HasColumnType("decimal(18,2)");
+
             builder.Property(oi => oi.ProductId)
                    .IsRequired();
 

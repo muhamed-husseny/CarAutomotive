@@ -20,6 +20,8 @@ namespace CarAutomotive.API.Extensions
 
             services.AddScoped<IProductFitmentService, ProductFitmentService>();
 
+            services.AddScoped<IOrderService, OrderService>();
+
             services.AddAutoMapper(config => config.AddMaps(typeof(MechanicMappingProfile).Assembly)); services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

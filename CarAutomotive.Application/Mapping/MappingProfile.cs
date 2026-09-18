@@ -1,4 +1,5 @@
 using CarAutomotive.Core.Dtos;
+using CarAutomotive.Core.DTOs;
 using CarAutomotive.Core.Entities.Orders;
 
 namespace CarAutomotive.Application.Mapping
@@ -67,6 +68,18 @@ namespace CarAutomotive.Application.Mapping
                     opt => opt.MapFrom(src => src.Images != null ? src.Images.FirstOrDefault() : null))
                 .ForMember(dest => dest.Images,
                     opt => opt.MapFrom(src => src.Images ?? new List<string>()));
+
+            CreateMap<ShippingAddress, OrderShippingAddressDto>();
+            CreateMap<OrderShippingAddressDto, ShippingAddress>();
+            CreateMap<OrderItem, OrderItemResponseDto>()
+                .ForMember(d => d.UnitPriceEGP, opt => opt.MapFrom(s => s.UnitPriceEgp > 0 ? s.UnitPriceEgp : s.Price))
+                .ForMember(d => d.TotalPriceEGP, opt => opt.MapFrom(s => s.TotalPriceEgp > 0 ? s.TotalPriceEgp : (s.Price * s.Quantity)));
+            CreateMap<Order, OrderResponseDto>()
+                .ForMember(d => d.SubtotalEGP, opt => opt.MapFrom(s => s.SubtotalEgp > 0 ? s.SubtotalEgp : s.TotalAmount))
+                .ForMember(d => d.DeliveryFeeEGP, opt => opt.MapFrom(s => s.DeliveryFeeEgp))
+                .ForMember(d => d.PlatformFeeEGP, opt => opt.MapFrom(s => s.PlatformFeeEgp))
+                .ForMember(d => d.TotalAmountEGP, opt => opt.MapFrom(s => s.TotalAmountEgp > 0 ? s.TotalAmountEgp : s.TotalAmount))
+                .ForMember(d => d.CreatedAt, opt => opt.MapFrom(s => s.CreatedAt != default ? s.CreatedAt : s.OrderDate));
         }
     }
 }
