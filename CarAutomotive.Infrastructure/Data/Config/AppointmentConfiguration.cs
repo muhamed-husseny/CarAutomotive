@@ -1,4 +1,4 @@
-﻿namespace CarAutomotive.Infrastructure.Data.Config
+namespace CarAutomotive.Infrastructure.Data.Config
 {
     public class AppointmentConfiguration : IEntityTypeConfiguration<Appointment>
     {
@@ -16,9 +16,20 @@
 
             builder.Property(a => a.Notes).HasMaxLength(500);
 
+            builder.Property(a => a.ServiceType).HasMaxLength(100);
+
             builder.Property(a => a.Status)
                    .HasConversion<int>();
 
+            builder.HasOne(a => a.Vehicle)
+                   .WithMany()
+                   .HasForeignKey(a => a.VehicleId)
+                   .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasOne(a => a.Invoice)
+                   .WithOne(i => i.Appointment)
+                   .HasForeignKey<Invoice>(i => i.AppointmentId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

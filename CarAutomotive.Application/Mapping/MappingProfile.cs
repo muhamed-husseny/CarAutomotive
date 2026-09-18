@@ -80,6 +80,11 @@ namespace CarAutomotive.Application.Mapping
                 .ForMember(d => d.PlatformFeeEGP, opt => opt.MapFrom(s => s.PlatformFeeEgp))
                 .ForMember(d => d.TotalAmountEGP, opt => opt.MapFrom(s => s.TotalAmountEgp > 0 ? s.TotalAmountEgp : s.TotalAmount))
                 .ForMember(d => d.CreatedAt, opt => opt.MapFrom(s => s.CreatedAt != default ? s.CreatedAt : s.OrderDate));
+
+            CreateMap<Invoice, InvoiceSummaryDto>()
+                .ForMember(d => d.Parts, opt => opt.MapFrom(s => s.Parts));
+            CreateMap<InvoicePart, InvoicePartDto>();
+            CreateMap<InvoicePartDto, InvoicePart>();
         }
     }
 }

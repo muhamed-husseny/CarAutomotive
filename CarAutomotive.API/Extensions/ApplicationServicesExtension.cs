@@ -22,6 +22,8 @@ namespace CarAutomotive.API.Extensions
 
             services.AddScoped<IOrderService, OrderService>();
 
+            services.AddScoped<IMechanicBookingService, MechanicBookingService>();
+
             services.AddAutoMapper(config => config.AddMaps(typeof(MechanicMappingProfile).Assembly)); services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

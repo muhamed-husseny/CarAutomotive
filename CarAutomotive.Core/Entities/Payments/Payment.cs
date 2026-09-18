@@ -1,4 +1,4 @@
-﻿namespace CarAutomotive.Core.Entities.Payments
+namespace CarAutomotive.Core.Entities.Payments
 {
     public class Payment : BaseEntity
     {
@@ -9,9 +9,9 @@
         public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
 
         
-        public string PaymentIntentId { get; set; }
+        public string PaymentIntentId { get; set; } = string.Empty;
 
-        public string ClientSecret { get; set; }
+        public string ClientSecret { get; set; } = string.Empty;
 
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
