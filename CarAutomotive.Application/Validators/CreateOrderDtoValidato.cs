@@ -1,31 +1,54 @@
-﻿namespace CarAutomotive.Application.Validators
+using CarAutomotive.Core.DTOs;
+using FluentValidation;
+
+namespace CarAutomotive.Application.Validators
 {
-    public class CreateOrderDtoValidator
-        : AbstractValidator<CreateOrderDto>
+    public class CreateOrderDtoValidator : AbstractValidator<CreateOrderDto>
     {
         public CreateOrderDtoValidator()
         {
-            RuleFor(x => x.CartId)
-                .NotEmpty();
-
-            RuleFor(x => x.ShippingAddress)
-                .NotNull();
-
-            RuleFor(x => x.ShippingAddress.FullName)
+            RuleFor(x => x.DeliveryType)
                 .NotEmpty()
-                .MaximumLength(100);
+                .Must(x => x.Equals("DIRECT_DELIVERY", StringComparison.OrdinalIgnoreCase) || 
+                           x.Equals("WORKSHOP_INSTALLATION", StringComparison.OrdinalIgnoreCase))
+                .WithMessage("DeliveryType must be either 'DIRECT_DELIVERY' or 'WORKSHOP_INSTALLATION'.");
 
-            RuleFor(x => x.ShippingAddress.PhoneNumber)
+            RuleFor(x => x.Items)
                 .NotEmpty()
-                .MaximumLength(20);
+                .WithMessage("Order must contain at least one item.");
 
-            RuleFor(x => x.ShippingAddress.City)
-                .NotEmpty()
-                .MaximumLength(100);
+            RuleForEach(x => x.Items).ChildRules(item =>
+            {
+                item.RuleFor(i => i.ProductId).NotEmpty().WithMessage("ProductId is required.");
+                item.RuleFor(i => i.Quantity).GreaterThan(0).WithMessage("Quantity must be greater than 0.");
+            });
 
-            RuleFor(x => x.ShippingAddress.Street)
-                .NotEmpty()
-                .MaximumLength(200);
+            When(x => x.DeliveryType.Equals("DIRECT_DELIVERY", StringComparison.OrdinalIgnoreCase), () =>
+            {
+                RuleFor(x => x.ShippingAddress)
+                    .NotNull()
+                    .WithMessage("ShippingAddress is required for direct delivery.");
+
+                RuleFor(x => x.ShippingAddress!.Street)
+                    .NotEmpty()
+                    .WithMessage("Street is required for direct delivery.");
+
+                RuleFor(x => x.ShippingAddress!.City)
+                    .NotEmpty()
+                    .WithMessage("City is required for direct delivery.");
+
+                RuleFor(x => x.ShippingAddress!.Governorate)
+                    .NotEmpty()
+                    .WithMessage("Governorate is required for direct delivery.");
+            });
+
+            When(x => x.DeliveryType.Equals("WORKSHOP_INSTALLATION", StringComparison.OrdinalIgnoreCase), () =>
+            {
+                RuleFor(x => x.PartnerWorkshopId)
+                    .NotNull()
+                    .NotEmpty()
+                    .WithMessage("PartnerWorkshopId is required for workshop installation.");
+            });
         }
     }
 }

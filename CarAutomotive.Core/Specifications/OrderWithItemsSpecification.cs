@@ -1,4 +1,4 @@
-﻿namespace CarAutomotive.Core.Specifications
+namespace CarAutomotive.Core.Specifications
 {
     public class OrderWithItemsSpecification : BaseSpecification<Order>
     {
