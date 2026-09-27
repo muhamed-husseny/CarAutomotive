@@ -1,6 +1,3 @@
-using CarAutomotive.Core.Entities.Identity;
-using CarAutomotive.Core.Enums;
-
 namespace CarAutomotive.Core.Entities
 {
     public class Vehicle : BaseEntity<Guid>
