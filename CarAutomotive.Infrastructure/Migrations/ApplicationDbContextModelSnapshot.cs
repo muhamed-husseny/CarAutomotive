@@ -36,6 +36,9 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.Property<DateTime>("AppointmentDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("AppointmentId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("MechanicId")
                         .HasColumnType("uuid");
 
@@ -44,10 +47,17 @@ namespace CarAutomotive.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<string>("ServiceType")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("VehicleId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -55,6 +65,8 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.HasIndex("MechanicId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("VehicleId");
 
                     b.ToTable("Appointments");
                 });
@@ -267,6 +279,68 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Invoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AppointmentGuid")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("LaborTotalEgp")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("PartsTotalEgp")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalAmountEgp")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
+                    b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("CarAutomotive.Core.Entities.InvoicePart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.ToTable("InvoiceParts");
+                });
+
             modelBuilder.Entity("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -384,17 +458,53 @@ namespace CarAutomotive.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("DeliveryFeeEgp")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DeliveryType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("FulfillmentStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid?>("PartnerWorkshopId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("PlatformFeeEgp")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("ScheduledInstallationTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<decimal>("SubtotalEgp")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalAmountEgp")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("UserId")
@@ -416,6 +526,9 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("MerchantId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
@@ -432,6 +545,12 @@ namespace CarAutomotive.Infrastructure.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalPriceEgp")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnitPriceEgp")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -831,9 +950,16 @@ namespace CarAutomotive.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CarAutomotive.Core.Entities.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Mechanic");
 
                     b.Navigation("User");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("CarAutomotive.Core.Entities.Appointment.Review", b =>
@@ -875,6 +1001,28 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.Navigation("Mechanic");
                 });
 
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Invoice", b =>
+                {
+                    b.HasOne("CarAutomotive.Core.Entities.Appointment.Appointment", "Appointment")
+                        .WithOne("Invoice")
+                        .HasForeignKey("CarAutomotive.Core.Entities.Invoice", "AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+                });
+
+            modelBuilder.Entity("CarAutomotive.Core.Entities.InvoicePart", b =>
+                {
+                    b.HasOne("CarAutomotive.Core.Entities.Invoice", "Invoice")
+                        .WithMany("Parts")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+                });
+
             modelBuilder.Entity("CarAutomotive.Core.Entities.Mechanic.MechanicService", b =>
                 {
                     b.HasOne("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", "MechanicProfile")
@@ -911,6 +1059,10 @@ namespace CarAutomotive.Infrastructure.Migrations
 
                             b1.Property<string>("FullName")
                                 .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
+
+                            b1.Property<string>("Governorate")
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)");
 
@@ -1050,6 +1202,11 @@ namespace CarAutomotive.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Appointment.Appointment", b =>
+                {
+                    b.Navigation("Invoice");
+                });
+
             modelBuilder.Entity("CarAutomotive.Core.Entities.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -1065,6 +1222,11 @@ namespace CarAutomotive.Infrastructure.Migrations
                     b.Navigation("Merchant");
 
                     b.Navigation("Vehicles");
+                });
+
+            modelBuilder.Entity("CarAutomotive.Core.Entities.Invoice", b =>
+                {
+                    b.Navigation("Parts");
                 });
 
             modelBuilder.Entity("CarAutomotive.Core.Entities.Mechanic.MechanicProfile", b =>

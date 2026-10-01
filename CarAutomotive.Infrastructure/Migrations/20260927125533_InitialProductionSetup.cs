@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CarAutomotive.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init_V2 : Migration
+    public partial class InitialProductionSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -85,14 +85,25 @@ namespace CarAutomotive.Infrastructure.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrderNumber = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DeliveryType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    PartnerWorkshopId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ScheduledInstallationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ShippingAddress_FullName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ShippingAddress_PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     ShippingAddress_City = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ShippingAddress_Street = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    ShippingAddress_Governorate = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    SubtotalEgp = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    DeliveryFeeEgp = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    PlatformFeeEgp = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    TotalAmountEgp = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    FulfillmentStatus = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false),
-                    OrderDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    OrderDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -251,7 +262,10 @@ namespace CarAutomotive.Infrastructure.Migrations
                     ProductName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     ImageUrl = table.Column<string>(type: "text", nullable: true),
                     Price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    UnitPriceEgp = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
+                    TotalPriceEgp = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    MerchantId = table.Column<Guid>(type: "uuid", nullable: true),
                     OrderId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -303,35 +317,6 @@ namespace CarAutomotive.Infrastructure.Migrations
                         name: "FK_ProductImages_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Appointments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    MechanicId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AppointmentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Notes = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Appointments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Appointments_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Appointments_MechanicProfiles_MechanicId",
-                        column: x => x.MechanicId,
-                        principalTable: "MechanicProfiles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -528,6 +513,89 @@ namespace CarAutomotive.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Appointments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AppointmentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    MechanicId = table.Column<Guid>(type: "uuid", nullable: false),
+                    VehicleId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ServiceType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    AppointmentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Notes = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Appointments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Appointments_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Appointments_MechanicProfiles_MechanicId",
+                        column: x => x.MechanicId,
+                        principalTable: "MechanicProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Appointments_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Invoices",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    AppointmentId = table.Column<int>(type: "integer", nullable: false),
+                    AppointmentGuid = table.Column<Guid>(type: "uuid", nullable: false),
+                    LaborTotalEgp = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    PartsTotalEgp = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    TotalAmountEgp = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    IsPaid = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PaidAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invoices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Invoices_Appointments_AppointmentId",
+                        column: x => x.AppointmentId,
+                        principalTable: "Appointments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvoiceParts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    InvoiceId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Price = table.Column<decimal>(type: "numeric(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvoiceParts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InvoiceParts_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_MechanicId",
                 table: "Appointments",
@@ -537,6 +605,11 @@ namespace CarAutomotive.Infrastructure.Migrations
                 name: "IX_Appointments_UserId",
                 table: "Appointments",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointments_VehicleId",
+                table: "Appointments",
+                column: "VehicleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -590,6 +663,17 @@ namespace CarAutomotive.Infrastructure.Migrations
                 name: "IX_Compatibilities_ProductId_Make_Model_Year",
                 table: "Compatibilities",
                 columns: new[] { "ProductId", "Make", "Model", "Year" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoiceParts_InvoiceId",
+                table: "InvoiceParts",
+                column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invoices_AppointmentId",
+                table: "Invoices",
+                column: "AppointmentId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -654,9 +738,6 @@ namespace CarAutomotive.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Appointments");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -673,6 +754,9 @@ namespace CarAutomotive.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Compatibilities");
+
+            migrationBuilder.DropTable(
+                name: "InvoiceParts");
 
             migrationBuilder.DropTable(
                 name: "MechanicService");
@@ -693,13 +777,13 @@ namespace CarAutomotive.Infrastructure.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "Vehicles");
-
-            migrationBuilder.DropTable(
                 name: "WalletLedgers");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Invoices");
 
             migrationBuilder.DropTable(
                 name: "Orders");
@@ -708,13 +792,19 @@ namespace CarAutomotive.Infrastructure.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Appointments");
 
             migrationBuilder.DropTable(
                 name: "Brands");
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Vehicles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "MechanicProfiles");
