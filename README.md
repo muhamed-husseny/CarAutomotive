@@ -1,8 +1,11 @@
 # CarAutomotive Platform
 
-CarAutomotive is a full-featured automotive platform that combines an e-commerce marketplace for car spare parts with an on-demand mechanic service system.
+Is a full-featured automotive platform that combines an e-commerce marketplace for car spare parts with an on-demand mechanic service system.
 
 The platform allows customers to purchase automotive products, manage orders and payments, and request repair services from nearby mechanics based on location and ratings.
+
+<img width="1821" height="871" alt="image" src="https://github.com/user-attachments/assets/edb5a641-110b-4e40-911b-73d4c430c7ad" />
+
 
 ---
 
@@ -100,8 +103,8 @@ CarAutomotive.Infrastructure
 
 ## Future Improvements
 
-- Docker Support
-- Redis Caching
-- Unit Testing
-- CI/CD Pipeline
-- Cloud Deployment
+-   **Real-time Notifications (SignalR):** Implement WebSocket communication to provide live updates for appointment status changes and order tracking.
+-   **Background Processing (Hangfire / Quartz.NET):** Introduce background jobs for automated tasks, such as sending appointment reminders or clearing abandoned shopping carts.
+-   **Advanced Observability & Logging:** Integrate structured logging and monitoring stacks (e.g., Serilog, ELK Stack, or Prometheus/Grafana) for better system health tracking.
+-   **Microservices Evolution:** Gradually decouple the E-commerce and Mechanic domains into independent microservices to scale them separately based on traffic demands.
+-   **Comprehensive Testing Suite:** Expand the testing strategy to include Integration Testing for database queries and End-to-End (E2E) testing for critical business flows.
