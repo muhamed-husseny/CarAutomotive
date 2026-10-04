@@ -1,0 +1,47 @@
+[
+  {
+    "UserId": "YOUR_USER_ID_HERE",
+    "Name": "AutoFix 10th of Ramadan",
+    "PhoneNumber": "01011111111",
+    "Address": "10th of Ramadan, Industrial Zone 3",
+    "Latitude": 30.3060,
+    "Longitude": 31.7420,
+    "YearsOfExperience": 12
+  },
+  {
+    "UserId": "YOUR_USER_ID_HERE",
+    "Name": "Ramadan Motors Care",
+    "PhoneNumber": "01022222222",
+    "Address": "10th of Ramadan, Ordoniya Square",
+    "Latitude": 30.2800,
+    "Longitude": 31.7450,
+    "YearsOfExperience": 8
+  },
+  {
+    "UserId": "YOUR_USER_ID_HERE",
+    "Name": "Cairo Stars Mechanics",
+    "PhoneNumber": "01033333333",
+    "Address": "Cairo, Nasr City, Makram Ebeid",
+    "Latitude": 30.0620,
+    "Longitude": 31.3360,
+    "YearsOfExperience": 15
+  },
+  {
+    "UserId": "YOUR_USER_ID_HERE",
+    "Name": "Maadi Premium Auto",
+    "PhoneNumber": "01044444444",
+    "Address": "Cairo, Maadi, Autostrad Road",
+    "Latitude": 29.9600,
+    "Longitude": 31.2600,
+    "YearsOfExperience": 20
+  },
+  {
+    "UserId": "YOUR_USER_ID_HERE",
+    "Name": "New Cairo Garage",
+    "PhoneNumber": "01055555555",
+    "Address": "Cairo, New Cairo, 5th Settlement",
+    "Latitude": 30.0200,
+    "Longitude": 31.4700,
+    "YearsOfExperience": 5
+  }
+]
