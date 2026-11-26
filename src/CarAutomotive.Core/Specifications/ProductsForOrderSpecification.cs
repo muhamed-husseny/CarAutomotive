@@ -10,12 +10,5 @@ namespace CarAutomotive.Core.Specifications
         {
             AddInclude(p => p.ProductImages);
         }
-
-        public ProductsForOrderSpecification(
-            IReadOnlyList<int> productIds)
-            : base(p => false)
-        {
-            AddInclude(p => p.ProductImages);
-        }
     }
 }

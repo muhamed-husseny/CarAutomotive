@@ -55,7 +55,7 @@ namespace CarAutomotive.Application.Services
             var cart = await _cartRepository.GetShoppingCartAsync(cartId);
             if (cart is null) return null;
 
-            var item = cart.Items.FirstOrDefault(i => i.ProductId.ToString() == dto.ProductId.ToString() || Math.Abs(i.ProductId.GetHashCode()) == dto.ProductId);
+            var item = cart.Items.FirstOrDefault(i => i.ProductId == dto.ProductId);
             if (item is null) return null;
 
             if (dto.NewQuantity <= 0)
@@ -67,12 +67,12 @@ namespace CarAutomotive.Application.Services
             return _mapper.Map<CartDto>(updatedCart);
         }
 
-        public async Task<CartDto?> RemoveFromCartAsync(string cartId, int productId)
+        public async Task<CartDto?> RemoveFromCartAsync(string cartId, Guid productId)
         {
             var cart = await _cartRepository.GetShoppingCartAsync(cartId);
             if (cart is null) return null;
 
-            var item = cart.Items.FirstOrDefault(i => i.ProductId.ToString() == productId.ToString() || Math.Abs(i.ProductId.GetHashCode()) == productId);
+            var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
             if (item is null) return null;
 
             cart.Items.Remove(item);

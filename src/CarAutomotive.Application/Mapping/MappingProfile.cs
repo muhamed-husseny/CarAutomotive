@@ -38,17 +38,13 @@ namespace CarAutomotive.Application.Mapping
             CreateMap<Category, CategoryDto>();
             CreateMap<Brand, BrandDto>();
             CreateMap<ShoppingCart, CartDto>();
-            CreateMap<CartItem, CartItemDto>()
-                .ForMember(d => d.ProductId, opt => opt.MapFrom(s => Math.Abs(s.ProductId.GetHashCode())));
+            CreateMap<CartItem, CartItemDto>();
             CreateMap<ShippingAddress, ShippingAddressDto>();
-            CreateMap<Compatibility, CompatibilityDto>()
-                .ForMember(d => d.ProductId, opt => opt.MapFrom(s => Math.Abs(s.ProductId.GetHashCode())));
+            CreateMap<Compatibility, CompatibilityDto>();
 
-            CreateMap<CreateCompatibilityDto, Compatibility>()
-                .ForMember(d => d.ProductId, opt => opt.MapFrom(s => Guid.Empty));
+            CreateMap<CreateCompatibilityDto, Compatibility>();
 
-            CreateMap<OrderItem, OrderItemDto>()
-                .ForMember(d => d.ProductId, opt => opt.MapFrom(s => Math.Abs(s.ProductId.GetHashCode())));
+            CreateMap<OrderItem, OrderItemDto>();
 
             CreateMap<Order, OrderToReturnDto>()
                 .ForMember(

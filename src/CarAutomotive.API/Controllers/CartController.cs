@@ -50,10 +50,10 @@
         }
 
         // DELETE: /api/cart/{cartId}/items/{productId}
-        [HttpDelete("{cartId}/items/{productId}")]
+        [HttpDelete("{cartId}/items/{productId:guid}")]
         public async Task<ActionResult<CartDto>> RemoveFromCart(
             string cartId,
-            int productId)
+            Guid productId)
         {
             var cart = await _cartService.RemoveFromCartAsync(cartId, productId);
 

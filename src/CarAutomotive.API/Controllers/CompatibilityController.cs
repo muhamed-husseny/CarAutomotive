@@ -16,10 +16,10 @@
 
 
 
-        [HttpGet("product/{productId}")]
+        [HttpGet("product/{productId:guid}")]
         public async Task<ActionResult<
             IReadOnlyList<CompatibilityDto>>>
-            GetByProduct(int productId)
+            GetByProduct(Guid productId)
         {
 
             var result =

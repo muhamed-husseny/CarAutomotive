@@ -20,7 +20,7 @@ namespace CarAutomotive.Application.Services
             _vehicleRepo = vehicleRepo;
         }
 
-        public async Task<ProductDto?> GetProductByIdAsync(int id)
+        public async Task<ProductDto?> GetProductByIdAsync(Guid id)
         {
             var spec = new ProductsWithCategorySpec(id);
 
@@ -53,7 +53,7 @@ namespace CarAutomotive.Application.Services
             return _mapper.Map<ProductDto>(createdProduct);
         }
 
-        public async Task<ProductDto?> UpdateProductAsync(int id, UpdateProductDto dto)
+        public async Task<ProductDto?> UpdateProductAsync(Guid id, UpdateProductDto dto)
         {
             var spec = new ProductsWithCategorySpec(id);
 
@@ -73,7 +73,7 @@ namespace CarAutomotive.Application.Services
             return _mapper.Map<ProductDto>(product);
         }
 
-        public async Task<bool> DeleteProductAsync(int id)
+        public async Task<bool> DeleteProductAsync(Guid id)
         {
             var product = await _unitOfWork
                 .Repository<Product>()
@@ -89,7 +89,7 @@ namespace CarAutomotive.Application.Services
             return true;
         }
 
-        public async Task<string?> UploadProductImageAsync(int productId, IFormFile file)
+        public async Task<string?> UploadProductImageAsync(Guid productId, IFormFile file)
         {
             var product = await _unitOfWork
                 .Repository<Product>()
@@ -113,13 +113,13 @@ namespace CarAutomotive.Application.Services
             return imageUrl;
         }
 
-        public async Task<bool> DeleteProductImageAsync(int productId, int imageId)
+        public async Task<bool> DeleteProductImageAsync(Guid productId, int imageId)
         {
             var productImage = await _unitOfWork
                .Repository<ProductImage>()
                .GetByIdAsync(imageId);
 
-            if (productImage?.ImageUrl == null || (productImage.ProductId.ToString() != productId.ToString() && Math.Abs(productImage.ProductId.GetHashCode()) != productId))
+            if (productImage?.ImageUrl == null || productImage.ProductId != productId)
                 return false;
 
             await _fileStorageService.DeleteFileAsync(productImage.ImageUrl);

@@ -2,7 +2,7 @@
 {
     public class CreateCompatibilityDto
     {
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
 
         public string Make { get; set; } = null!;
 
