@@ -1,0 +1,37 @@
+name: CarAutomotive Backend CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test-docker:
+    name: Build, Test & Docker Verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore NuGet dependencies
+        run: dotnet restore CarAutomotive.sln
+
+      - name: Build solution (Release)
+        run: dotnet build CarAutomotive.sln --configuration Release --no-restore
+
+      - name: Run xUnit test suite
+        run: dotnet test CarAutomotive.sln --configuration Release --no-build --logger "console;verbosity=normal"
+
+      - name: Verify production Docker image build
+        run: docker build --tag carautomotive-api:ci .
