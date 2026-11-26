@@ -174,6 +174,31 @@ app.MapHealthChecks("/health");
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
+var shouldSeedDemo = builder.Configuration.GetValue<bool>("SeedDemoData")
+    || args.Any(a => string.Equals(a, "--seed-demo", StringComparison.OrdinalIgnoreCase));
+
+if (shouldSeedDemo)
+{
+    await using var seedScope = app.Services.CreateAsyncScope();
+    var seedServices = seedScope.ServiceProvider;
+    var logger = seedServices.GetRequiredService<ILoggerFactory>().CreateLogger("DemoDataSeeder");
+    try
+    {
+        var dbContext = seedServices.GetRequiredService<ApplicationDbContext>();
+        var userManager = seedServices.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = seedServices.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+        var demoPassword = builder.Configuration["DemoSeed:DefaultPassword"];
+
+        await DemoDataSeeder.SeedAsync(dbContext, userManager, roleManager, demoPassword);
+        logger.LogInformation("Demo data seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while seeding demo data.");
+        throw;
+    }
+}
+
 #endregion
 
 app.Run();

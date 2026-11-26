@@ -146,22 +146,27 @@ namespace CarAutomotive.Infrastructure.Services
                     appointment.Invoice.PaidAt = DateTime.UtcNow;
                 }
 
-                // Replace parts
+                // Replace parts cleanly on the tracked invoice graph
+                foreach (var existingPart in appointment.Invoice.Parts.ToList())
+                {
+                    _unitOfWork.Repository<InvoicePart>().Delete(existingPart);
+                }
                 appointment.Invoice.Parts.Clear();
+
                 if (dto.Parts != null)
                 {
                     foreach (var part in dto.Parts)
                     {
-                        appointment.Invoice.Parts.Add(new InvoicePart
+                        var newPart = new InvoicePart
                         {
                             InvoiceId = appointment.Invoice.Id,
                             Name = part.Name,
                             Price = part.Price
-                        });
+                        };
+                        _unitOfWork.Repository<InvoicePart>().Add(newPart);
+                        appointment.Invoice.Parts.Add(newPart);
                     }
                 }
-
-                _unitOfWork.Repository<Invoice>().Update(appointment.Invoice);
             }
 
             await _unitOfWork.CompleteAsync();
