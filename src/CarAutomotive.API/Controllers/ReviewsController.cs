@@ -1,8 +1,6 @@
 ﻿namespace CarAutomotive.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ReviewsController : ControllerBase
+    public class ReviewsController : BaseApiController
     {
         private readonly IReviewService _reviewService;
 

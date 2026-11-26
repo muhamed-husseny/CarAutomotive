@@ -114,7 +114,7 @@ namespace CarAutomotive.Tests.API
         {
             var client = _factory.CreateClient();
 
-            var createMechanic = await client.PostAsJsonAsync("/api/Mechanic", new CreateMechanicProfileDto
+            var createMechanic = await client.PostAsJsonAsync("/api/v1/mechanics", new CreateMechanicProfileDto
             {
                 Name = "Anon Workshop",
                 PhoneNumber = "01000000000",
@@ -124,7 +124,7 @@ namespace CarAutomotive.Tests.API
             });
             var mechanicBookings = await client.GetAsync("/api/v1/mechanic/bookings");
             var merchantOrders = await client.GetAsync("/api/v1/merchant/orders");
-            var appointment = await client.GetAsync($"/api/Appointments/{Guid.NewGuid()}");
+            var appointment = await client.GetAsync($"/api/v1/appointments/{Guid.NewGuid()}");
 
             Assert.Equal(HttpStatusCode.Unauthorized, createMechanic.StatusCode);
             Assert.Equal(HttpStatusCode.Unauthorized, mechanicBookings.StatusCode);
@@ -142,7 +142,7 @@ namespace CarAutomotive.Tests.API
             // Customer cannot access Mechanic or Merchant portals or create mechanics
             Assert.Equal(HttpStatusCode.Forbidden, (await customerClient.GetAsync("/api/v1/mechanic/bookings")).StatusCode);
             Assert.Equal(HttpStatusCode.Forbidden, (await customerClient.GetAsync("/api/v1/merchant/orders")).StatusCode);
-            Assert.Equal(HttpStatusCode.Forbidden, (await customerClient.PostAsJsonAsync("/api/Mechanic", new CreateMechanicProfileDto
+            Assert.Equal(HttpStatusCode.Forbidden, (await customerClient.PostAsJsonAsync("/api/v1/mechanics", new CreateMechanicProfileDto
             {
                 Name = "Blocked Workshop",
                 PhoneNumber = "01000000000",
@@ -208,16 +208,16 @@ namespace CarAutomotive.Tests.API
             var adminClient = CreateAuthenticatedClient(Guid.NewGuid(), "Admin");
 
             // Another user gets 403 Forbidden on appointment read, status update, and mechanic schedule
-            Assert.Equal(HttpStatusCode.Forbidden, (await otherClient.GetAsync($"/api/Appointments/{appointmentId}")).StatusCode);
-            Assert.Equal(HttpStatusCode.Forbidden, (await otherClient.PutAsJsonAsync($"/api/Appointments/{appointmentId}/status", AppointmentStatus.Cancelled)).StatusCode);
-            Assert.Equal(HttpStatusCode.Forbidden, (await otherClient.GetAsync($"/api/Appointments/mechanic/{mechanicProfileId}")).StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, (await otherClient.GetAsync($"/api/v1/appointments/{appointmentId}")).StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, (await otherClient.PutAsJsonAsync($"/api/v1/appointments/{appointmentId}/status", AppointmentStatus.Cancelled)).StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, (await otherClient.GetAsync($"/api/v1/appointments/mechanic/{mechanicProfileId}")).StatusCode);
 
             // Owner, assigned mechanic, and Admin are allowed
-            Assert.Equal(HttpStatusCode.OK, (await ownerClient.GetAsync($"/api/Appointments/{appointmentId}")).StatusCode);
-            Assert.Equal(HttpStatusCode.OK, (await mechanicClient.GetAsync($"/api/Appointments/{appointmentId}")).StatusCode);
-            Assert.Equal(HttpStatusCode.OK, (await mechanicClient.GetAsync($"/api/Appointments/mechanic/{mechanicProfileId}")).StatusCode);
-            Assert.Equal(HttpStatusCode.OK, (await adminClient.GetAsync($"/api/Appointments/{appointmentId}")).StatusCode);
-            Assert.Equal(HttpStatusCode.OK, (await adminClient.GetAsync($"/api/Appointments/mechanic/{mechanicProfileId}")).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await ownerClient.GetAsync($"/api/v1/appointments/{appointmentId}")).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await mechanicClient.GetAsync($"/api/v1/appointments/{appointmentId}")).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await mechanicClient.GetAsync($"/api/v1/appointments/mechanic/{mechanicProfileId}")).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await adminClient.GetAsync($"/api/v1/appointments/{appointmentId}")).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await adminClient.GetAsync($"/api/v1/appointments/mechanic/{mechanicProfileId}")).StatusCode);
         }
 
         [Fact]

@@ -74,7 +74,7 @@ namespace CarAutomotive.Tests.API
             var client = _factory.CreateClient();
 
             // 2. Act
-            var response = await client.GetAsync("/api/products");
+            var response = await client.GetAsync("/api/v1/products");
             var errorDetails = await response.Content.ReadAsStringAsync();
 
             // 3. Assert
@@ -112,7 +112,7 @@ namespace CarAutomotive.Tests.API
             var client = _factory.CreateClient();
 
             // 2. Act
-            var response = await client.GetAsync($"/api/products/{productId}");
+            var response = await client.GetAsync($"/api/v1/products/{productId}");
 
             // 3. Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -127,7 +127,7 @@ namespace CarAutomotive.Tests.API
         {
             var client = _factory.CreateClient();
 
-            var response = await client.GetAsync($"/api/products/{Guid.NewGuid()}");
+            var response = await client.GetAsync($"/api/v1/products/{Guid.NewGuid()}");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
@@ -137,7 +137,7 @@ namespace CarAutomotive.Tests.API
         {
             var client = _factory.CreateClient();
 
-            var response = await client.GetAsync("/api/products/123");
+            var response = await client.GetAsync("/api/v1/products/123");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }

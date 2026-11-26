@@ -3,5 +3,6 @@
     public class NearbyMechanicDto : MechanicProfileDto
     {
         public double DistanceInMeters { get; set; }
+        public double DistanceKm { get; set; }
     }
 }

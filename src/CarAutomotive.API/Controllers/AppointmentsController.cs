@@ -1,7 +1,5 @@
 ﻿namespace CarAutomotive.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
     public class AppointmentsController : BaseApiController
     {

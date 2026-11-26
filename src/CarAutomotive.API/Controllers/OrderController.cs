@@ -4,8 +4,6 @@ using CarAutomotive.Core.Interfaces;
 namespace CarAutomotive.API.Controllers
 {
     [Authorize]
-    [Route("api/v1/[controller]")]
-    [Route("api/[controller]")]
     public class OrdersController : BaseApiController
     {
         private readonly IOrderService _orderService;
@@ -18,7 +16,6 @@ namespace CarAutomotive.API.Controllers
         }
 
         // POST: /api/v1/orders
-        [HttpPost("/api/v1/orders")]
         [HttpPost]
         public async Task<ActionResult<OrderResponseDto>> CreateOrder([FromBody] CreateOrderDto dto)
         {
@@ -52,7 +49,6 @@ namespace CarAutomotive.API.Controllers
         }
 
         // GET: /api/v1/orders
-        [HttpGet("/api/v1/orders")]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<OrderResponseDto>>> GetOrders([FromQuery] string? status)
         {
@@ -67,7 +63,6 @@ namespace CarAutomotive.API.Controllers
         }
 
         // GET: /api/v1/orders/{id:guid}
-        [HttpGet("/api/v1/orders/{id:guid}")]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<OrderResponseDto>> GetOrderById(Guid id)
         {
@@ -85,7 +80,6 @@ namespace CarAutomotive.API.Controllers
         }
 
         // PUT: /api/v1/orders/{id:guid}/cancel
-        [HttpPut("/api/v1/orders/{id:guid}/cancel")]
         [HttpPut("{id:guid}/cancel")]
         public async Task<ActionResult> CancelOrder(Guid id)
         {

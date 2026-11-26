@@ -3,9 +3,7 @@
 namespace CarAutomotive.API.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AdminController : ControllerBase
+    public class AdminController : BaseApiController
     {
         private readonly IAdminService _adminService;
 

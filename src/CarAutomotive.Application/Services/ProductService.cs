@@ -43,7 +43,7 @@ namespace CarAutomotive.Application.Services
             _unitOfWork.Repository<Product>().Add(product);
 
             await _unitOfWork.CompleteAsync();
-            await _cacheService.RemoveCacheResponseAsync("/api/products");
+            await _cacheService.RemoveCacheResponseAsync("/api/v1/products");
             var spec = new ProductsWithCategorySpec(product.Id);
 
             var createdProduct = await _unitOfWork
@@ -69,7 +69,7 @@ namespace CarAutomotive.Application.Services
             _unitOfWork.Repository<Product>().Update(product);
 
             await _unitOfWork.CompleteAsync();
-            await _cacheService.RemoveCacheResponseAsync("/api/products");
+            await _cacheService.RemoveCacheResponseAsync("/api/v1/products");
             return _mapper.Map<ProductDto>(product);
         }
 
@@ -85,7 +85,7 @@ namespace CarAutomotive.Application.Services
             _unitOfWork.Repository<Product>().Delete(product);
 
             await _unitOfWork.CompleteAsync();
-            await _cacheService.RemoveCacheResponseAsync("/api/products");
+            await _cacheService.RemoveCacheResponseAsync("/api/v1/products");
             return true;
         }
 
@@ -109,7 +109,7 @@ namespace CarAutomotive.Application.Services
             _unitOfWork.Repository<ProductImage>().Add(productImage);
 
             await _unitOfWork.CompleteAsync();
-            await _cacheService.RemoveCacheResponseAsync("/api/products");
+            await _cacheService.RemoveCacheResponseAsync("/api/v1/products");
             return imageUrl;
         }
 
@@ -125,7 +125,7 @@ namespace CarAutomotive.Application.Services
             await _fileStorageService.DeleteFileAsync(productImage.ImageUrl);
             _unitOfWork.Repository<ProductImage>().Delete(productImage);
             await _unitOfWork.CompleteAsync();
-            await _cacheService.RemoveCacheResponseAsync("/api/products");
+            await _cacheService.RemoveCacheResponseAsync("/api/v1/products");
 
             return true;
         }

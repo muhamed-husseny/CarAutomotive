@@ -12,7 +12,10 @@ namespace CarAutomotive.Core.Interfaces
         
         Task<IReadOnlyList<NearbyMechanicDto>> SearchNearbyMechanicsAsync(MechanicSearchDto searchDto);
 
-        Task<IReadOnlyList<MechanicProfileDto>> GetAllMechanicsAsync();
+        Task<IReadOnlyList<MechanicProfileDto>> GetAllMechanicsAsync(
+            string? city = null,
+            double? minRating = null,
+            string? serviceName = null);
 
         Task<IReadOnlyList<MechanicProfileDto>> GetMechanicsByCityAsync(string city);
     }
