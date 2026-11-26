@@ -35,6 +35,14 @@ namespace CarAutomotive.Tests.API
         {
             _factory = factory.WithWebHostBuilder(builder =>
             {
+                builder.UseSetting("ConnectionStrings:DefaultConnection", "Host=localhost;Database=car_automotive_test;Username=test;Password=test");
+                builder.UseSetting("ConnectionStrings:Redis", "localhost:6379");
+                builder.UseSetting("Token:Key", TestJwtKey);
+                builder.UseSetting("Token:Issuer", TestJwtIssuer);
+                builder.UseSetting("Token:Audience", TestJwtAudience);
+                builder.UseSetting("StripeSettings:SecretKey", "sk_test_dummy_key_for_tests");
+                builder.UseSetting("Cors:AllowedOrigins:0", "http://localhost:3000");
+
                 builder.ConfigureAppConfiguration((_, configBuilder) =>
                 {
                     configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
