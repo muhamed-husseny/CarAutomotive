@@ -38,8 +38,12 @@ builder.Services.AddCors(opts => opts.AddPolicy("CorsPolicy", policy =>
     }
 }));
 
-builder.Services.AddHealthChecks()
-    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection"));
+var healthChecksBuilder = builder.Services.AddHealthChecks();
+var defaultConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrWhiteSpace(defaultConnectionString))
+{
+    healthChecksBuilder.AddNpgSql(defaultConnectionString);
+}
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
