@@ -1,8 +1,8 @@
 # CarAutomotive Platform
 
-Is a full-featured automotive platform that combines an e-commerce marketplace for car spare parts with an on-demand mechanic service system.
+[![CarAutomotive Backend CI](https://github.com/muhamed-husseny/CarAutomotive/actions/workflows/ci.yml/badge.svg)](https://github.com/muhamed-husseny/CarAutomotive/actions/workflows/ci.yml)
 
-The platform allows customers to purchase automotive products, manage orders and payments, and request repair services from nearby mechanics based on location and ratings.
+A production-ready **.NET 8 Onion Architecture** backend for a web-first automotive marketplace and workshop platform — combining a spare-parts e-commerce store with smart vehicle fitment, interactive PostGIS workshop discovery, appointment scheduling, digital repair invoicing, and Stripe split-ledger payments.
 
 <img width="1821" height="871" alt="image" src="https://github.com/user-attachments/assets/edb5a641-110b-4e40-911b-73d4c430c7ad" />
 
@@ -101,12 +101,63 @@ The project follows Onion Architecture principles to ensure:
 ## Project Structure
 
 - **src/**
-  - `CarAutomotive.API`
-  - `CarAutomotive.Application`
-  - `CarAutomotive.Core`
-  - `CarAutomotive.Infrastructure`
+  - `CarAutomotive.Core` — Domain entities, enums, interfaces, specifications, shared DTOs
+  - `CarAutomotive.Application` — Application services, DTOs, AutoMapper profiles, FluentValidation validators
+  - `CarAutomotive.Infrastructure` — EF Core (`ApplicationDbContext`), PostGIS spatial queries, Redis caching, Stripe, Supabase, idempotent `DemoDataSeeder`
+  - `CarAutomotive.API` — Versioned `/api/v1/...` controllers, JWT/RBAC auth, exception middleware, rate limiting, Swagger OpenAPI
 - **tests/**
-  - `CarAutomotive.Tests`
+  - `CarAutomotive.Tests` — xUnit + Moq Unit, Integration, API Contract, RBAC/IDOR Security, and Seeder Idempotency tests
+
+---
+
+## API Overview (`/api/v1`)
+
+| Domain | Base Route | Highlights |
+| --- | --- | --- |
+| **Auth & Accounts** | `/api/v1/account` | Register, Login, Refresh Token, Email Verification, Role Assignment |
+| **Products & Fitment** | `/api/v1/products` | `Guid` product IDs, filtering/sorting/pagination, Redis caching, `POST /fitment-check` |
+| **My Garage (Vehicles)** | `/api/v1/vehicles` | Unified customer garage contract (`GET`, `POST`) |
+| **Workshops Map** | `/api/v1/mechanics` | Numeric `latitude`/`longitude`, `services`, `distanceKm`, query filters (`city`, `minRating`, `serviceName`), PostGIS `search-nearby`, `city/{city}` |
+| **Appointments** | `/api/v1/appointments` | Conflict-validated scheduling with owner/mechanic/Admin IDOR protection |
+| **Mechanic Portal** | `/api/v1/mechanic/bookings` | `[Authorize(Roles = "Mechanic")]` booking lifecycle & itemized repair invoicing |
+| **Orders & Cart** | `/api/v1/orders`, `/api/v1/cart` | Multi-merchant order creation, cancellation, Redis shopping cart |
+| **Merchant Portal** | `/api/v1/merchant/orders` | `[Authorize(Roles = "Merchant")]` order fulfillment management |
+| **Payments** | `/api/v1/payments` | Stripe PaymentIntent creation & `[AllowAnonymous]` signature-verified `/webhook` |
+| **Admin & Health** | `/api/v1/admin`, `/health` | Role-gated admin directory & PostgreSQL health check |
+
+---
+
+## Local Development, Testing & Docker
+
+### Prerequisites
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- Docker Desktop (optional, for containerized runs)
+- Environment variables (or local `.env`, never committed): `ConnectionStrings__DefaultConnection`, `ConnectionStrings__Redis`, `Token__Key`, `Token__Issuer`, `Token__Audience`, `StripeSettings__SecretKey`, `Supabase__Url`, `Supabase__Key`, `Cors__AllowedOrigins__0`.
+
+### Build & Run Tests (Offline — No Live Secrets Required)
+```bash
+dotnet restore CarAutomotive.sln
+dotnet build CarAutomotive.sln -c Release --no-restore
+dotnet test CarAutomotive.sln -c Release --no-build
+```
+
+### Run Locally with Opt-In Demo Seeding
+```bash
+dotnet run --project src/CarAutomotive.API -- --seed-demo
+# or set SeedDemoData=true in environment variables
+```
+Seeding is **100% idempotent** and creates 6 Cairo & Giza workshops (Maadi, Nasr City, Dokki, Sheikh Zayed, 6th of October, Zamalek), spare parts + vehicle fitment data, and 4 demo role accounts (default password `DemoPass123!`, overridable via `DemoSeed__DefaultPassword`):
+- **Customer:** `customer@carautomotive.demo`
+- **Mechanic:** `mechanic@carautomotive.demo`
+- **Merchant:** `merchant@carautomotive.demo`
+- **Admin:** `admin@carautomotive.demo`
+
+### Run with Docker (Non-Root Hardened Container)
+```bash
+docker build -t carautomotive-api:v1 .
+docker compose up --build
+```
+The API listens on `http://localhost:8080` (health check at `/health`).
 
 ---
 

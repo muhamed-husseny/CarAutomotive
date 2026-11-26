@@ -14,17 +14,23 @@ RUN dotnet restore "CarAutomotive.sln"
 
 COPY . .
 
-RUN dotnet publish "src/CarAutomotive.API/CarAutomotive.API.csproj" -c Release -o /app/publish --no-restore
+RUN dotnet publish "src/CarAutomotive.API/CarAutomotive.API.csproj" \
+    -c Release \
+    -o /app/publish \
+    --no-restore \
+    /p:UseAppHost=false
 
-# Runtime Stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+# Runtime Stage (Non-Root Hardened)
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 
 WORKDIR /app
 
-COPY --from=build /app/publish .
+COPY --from=build --chown=app:app /app/publish .
 
 ENV ASPNETCORE_URLS=http://+:8080
 
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet","CarAutomotive.API.dll"]
+USER app
+
+ENTRYPOINT ["dotnet", "CarAutomotive.API.dll"]
