@@ -2,8 +2,7 @@
 
 namespace CarAutomotive.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/v1/mechanics")]
     public class MechanicController : BaseApiController
     {
         private readonly IMechanicService _mechanicService;
@@ -22,13 +21,13 @@ namespace CarAutomotive.API.Controllers
             return Ok(mechanic);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<MechanicProfileDto>> GetMechanicById(Guid id)
         {
             var mechanic = await _mechanicService.GetMechanicProfileByIdAsync(id);
 
             if (mechanic == null)
-                return NotFound(new { message = "MechanicNotFound!" });
+                return NotFound(new ApiResponse(404, "Mechanic not found."));
 
             return Ok(mechanic);
         }
@@ -42,9 +41,12 @@ namespace CarAutomotive.API.Controllers
 
         [HttpGet]
         [OutputCache(PolicyName = "Cache5Mins")]
-        public async Task<ActionResult<IReadOnlyList<MechanicProfileDto>>> GetAllMechanics()
+        public async Task<ActionResult<IReadOnlyList<MechanicProfileDto>>> GetAllMechanics(
+            [FromQuery] string? city = null,
+            [FromQuery] double? minRating = null,
+            [FromQuery] string? serviceName = null)
         {
-            var mechanics = await _mechanicService.GetAllMechanicsAsync();
+            var mechanics = await _mechanicService.GetAllMechanicsAsync(city, minRating, serviceName);
             return Ok(mechanics);
         }
 

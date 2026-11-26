@@ -120,7 +120,6 @@ GetProducts([FromQuery] ProductFilterDto filter)
         }
 
         // POST: /api/v1/products/fitment-check
-        [HttpPost("/api/v1/products/fitment-check")]
         [HttpPost("fitment-check")]
         public async Task<ActionResult<FitmentResultDto>> CheckFitment([FromBody] FitmentCheckRequestDto request)
         {

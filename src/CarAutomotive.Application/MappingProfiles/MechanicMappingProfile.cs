@@ -7,18 +7,23 @@ namespace CarAutomotive.Application.MappingProfiles
     {
         public MechanicMappingProfile()
         {
+            CreateMap<MechanicService, MechanicServiceDto>();
+
             CreateMap<MechanicProfile, MechanicProfileDto>()
-                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Location.X))
-                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Location.Y));
+                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Location != null ? src.Location.X : 0))
+                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Location != null ? src.Location.Y : 0))
+                .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services));
 
             CreateMap<CreateMechanicProfileDto, MechanicProfile>()
                 .ForMember(dest => dest.Location, opt => opt.MapFrom(src =>
                     new Point(src.Longitude, src.Latitude) { SRID = 4326 }));
 
             CreateMap<MechanicProfile, NearbyMechanicDto>()
-                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Location.X))
-                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Location.Y))
-                .ForMember(dest => dest.DistanceInMeters, opt => opt.Ignore());
+                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Location != null ? src.Location.X : 0))
+                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Location != null ? src.Location.Y : 0))
+                .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services))
+                .ForMember(dest => dest.DistanceInMeters, opt => opt.Ignore())
+                .ForMember(dest => dest.DistanceKm, opt => opt.Ignore());
 
             CreateMap<Vehicle, VehicleDto>()
                 .ForMember(dest => dest.Status,

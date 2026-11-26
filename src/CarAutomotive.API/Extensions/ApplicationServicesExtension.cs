@@ -4,6 +4,9 @@ namespace CarAutomotive.API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            // Enforce lowercase URLs across routing and generated Swagger OpenAPI paths
+            services.AddRouting(options => options.LowercaseUrls = true);
+
             // Repositories & Unit of Work
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -38,6 +41,26 @@ namespace CarAutomotive.API.Extensions
             {
                 typeof(CreateProductDtoValidator).Assembly,
                 typeof(CreateMechanicProfileDtoValidator).Assembly
+            });
+
+            // Consistent API validation error response schema across all controllers
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = actionContext =>
+                {
+                    var errors = actionContext.ModelState
+                        .Where(e => e.Value?.Errors.Count > 0)
+                        .SelectMany(x => x.Value!.Errors)
+                        .Select(x => string.IsNullOrWhiteSpace(x.ErrorMessage) ? "Invalid request payload." : x.ErrorMessage)
+                        .ToArray();
+
+                    var errorResponse = new ApiValidationErrorResponse
+                    {
+                        Errors = errors
+                    };
+
+                    return new BadRequestObjectResult(errorResponse);
+                };
             });
 
             services.AddAuthentication(options =>
