@@ -1,17 +1,17 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36221.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAutomotive.Core", "CarAutomotive.Core\CarAutomotive.Core.csproj", "{8FCEB872-C81C-4A46-B6C7-9B5582040044}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAutomotive.Core", "src\CarAutomotive.Core\CarAutomotive.Core.csproj", "{8FCEB872-C81C-4A46-B6C7-9B5582040044}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAutomotive.Application", "CarAutomotive.Application\CarAutomotive.Application.csproj", "{F80E3A20-697A-41B1-B6B6-1621C4A163E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAutomotive.Application", "src\CarAutomotive.Application\CarAutomotive.Application.csproj", "{F80E3A20-697A-41B1-B6B6-1621C4A163E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAutomotive.Infrastructure", "CarAutomotive.Infrastructure\CarAutomotive.Infrastructure.csproj", "{50B9573F-267B-44A1-95DD-941EE145BFD1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAutomotive.Infrastructure", "src\CarAutomotive.Infrastructure\CarAutomotive.Infrastructure.csproj", "{50B9573F-267B-44A1-95DD-941EE145BFD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAutomotive.API", "CarAutomotive.API\CarAutomotive.API.csproj", "{B9C259FE-3504-964C-5271-9BE42F3ABAC8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAutomotive.API", "src\CarAutomotive.API\CarAutomotive.API.csproj", "{B9C259FE-3504-964C-5271-9BE42F3ABAC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAutomotive.Tests", "CarAutomotive.Tests\CarAutomotive.Tests.csproj", "{08EA0D61-ED1A-43CF-B2E4-69FEA17463AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAutomotive.Tests", "tests\CarAutomotive.Tests\CarAutomotive.Tests.csproj", "{08EA0D61-ED1A-43CF-B2E4-69FEA17463AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

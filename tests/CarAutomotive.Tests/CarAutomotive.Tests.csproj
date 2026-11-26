@@ -20,10 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarAutomotive.API\CarAutomotive.API.csproj" />
-    <ProjectReference Include="..\CarAutomotive.Application\CarAutomotive.Application.csproj" />
-    <ProjectReference Include="..\CarAutomotive.Core\CarAutomotive.Core.csproj" />
-    <ProjectReference Include="..\CarAutomotive.Infrastructure\CarAutomotive.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\CarAutomotive.API\CarAutomotive.API.csproj" />
+    <ProjectReference Include="..\..\src\CarAutomotive.Application\CarAutomotive.Application.csproj" />
+    <ProjectReference Include="..\..\src\CarAutomotive.Core\CarAutomotive.Core.csproj" />
+    <ProjectReference Include="..\..\src\CarAutomotive.Infrastructure\CarAutomotive.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
