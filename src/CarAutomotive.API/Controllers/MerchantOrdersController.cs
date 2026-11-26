@@ -3,7 +3,7 @@ using CarAutomotive.Core.Interfaces;
 
 namespace CarAutomotive.API.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Merchant")]
     [Route("api/v1/merchant/orders")]
     public class MerchantOrdersController : BaseApiController
     {

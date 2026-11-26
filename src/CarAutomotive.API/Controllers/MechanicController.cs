@@ -13,6 +13,7 @@ namespace CarAutomotive.API.Controllers
             _mechanicService = mechanicService;
         }
 
+        [Authorize(Roles = "Admin,Mechanic")]
         [HttpPost]
         [EnableRateLimiting("StrictPolicy")]
         public async Task<ActionResult<MechanicProfileDto>> CreateMechanic(CreateMechanicProfileDto dto)

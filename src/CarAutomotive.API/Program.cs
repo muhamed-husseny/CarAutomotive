@@ -11,8 +11,32 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 
-builder.Services.AddCors(opts => opts.AddPolicy("DevPolicy",
-    b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+var configuredOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>()?
+    .Where(o => !string.IsNullOrWhiteSpace(o))
+    .ToArray() ?? Array.Empty<string>();
+
+if (configuredOrigins.Length == 0 && builder.Environment.IsDevelopment())
+{
+    configuredOrigins = new[]
+    {
+        "http://localhost:3000",
+        "https://localhost:3000",
+        "http://localhost:5173"
+    };
+}
+
+builder.Services.AddCors(opts => opts.AddPolicy("CorsPolicy", policy =>
+{
+    if (configuredOrigins.Length > 0)
+    {
+        policy.WithOrigins(configuredOrigins)
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    }
+}));
 
 builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -116,14 +140,20 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 #region Configure Kestrel Middlewares
 // Configure the HTTP request pipeline.
-app.UseSwagger();
+var swaggerEnabled = app.Environment.IsDevelopment()
+    || builder.Configuration.GetValue<bool>("Swagger:Enabled");
 
-app.UseSwaggerUI(options =>
+if (swaggerEnabled)
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "CarAutomotive API V1");
-});
+    app.UseSwagger();
 
-app.UseCors("DevPolicy");
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "CarAutomotive API V1");
+    });
+}
+
+app.UseCors("CorsPolicy");
 
 //app.UseHttpsRedirection();
 

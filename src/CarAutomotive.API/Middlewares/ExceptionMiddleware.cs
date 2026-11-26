@@ -34,6 +34,36 @@
 
                 await context.Response.WriteAsync(json);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+
+                var response = new ApiResponse(403, ex.Message);
+
+                var json = JsonSerializer.Serialize(response,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    });
+
+                await context.Response.WriteAsync(json);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = StatusCodes.Status404NotFound;
+
+                var response = new ApiResponse(404, ex.Message);
+
+                var json = JsonSerializer.Serialize(response,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    });
+
+                await context.Response.WriteAsync(json);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
