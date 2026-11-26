@@ -2,7 +2,7 @@
 {
     public class UpdateCartItemDto
     {
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
         public int NewQuantity { get; set; }
     }
 }

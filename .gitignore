@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 # Docker Environment Variables
 .env
+
+# Local mobile docs (excluded from backend repo)
+docs/mobile/

@@ -51,8 +51,8 @@ GetProducts([FromQuery] ProductFilterDto filter)
 
         // GET: /api/products/{id}
         [EnableRateLimiting("GeneralPolicy")]
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<ProductDto>> GetProductById(int id)
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<ProductDto>> GetProductById(Guid id)
         {
             var product = await _productService.GetProductByIdAsync(id);
 
@@ -72,8 +72,8 @@ GetProducts([FromQuery] ProductFilterDto filter)
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult<ProductDto>> UpdateProduct(int id, UpdateProductDto dto)
+        [HttpPut("{id:guid}")]
+        public async Task<ActionResult<ProductDto>> UpdateProduct(Guid id, UpdateProductDto dto)
         {
             var validationResult = await _updateProductValidator.ValidateAsync(dto);
             if (!validationResult.IsValid) return BadRequest(validationResult.Errors);
@@ -83,8 +83,8 @@ GetProducts([FromQuery] ProductFilterDto filter)
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id:int}")]
-        public async Task<ActionResult> DeleteProduct(int id)
+        [HttpDelete("{id:guid}")]
+        public async Task<ActionResult> DeleteProduct(Guid id)
         {
             var result = await _productService.DeleteProductAsync(id);
 
@@ -95,9 +95,9 @@ GetProducts([FromQuery] ProductFilterDto filter)
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("{id:int}/images")]
+        [HttpPost("{id:guid}/images")]
         [Consumes("multipart/form-data")]
-        public async Task<ActionResult<string>> UploadProductImage(int id, IFormFile file)
+        public async Task<ActionResult<string>> UploadProductImage(Guid id, IFormFile file)
         {
             var imageUrl = await _productService.UploadProductImageAsync(id, file);
 
@@ -108,8 +108,8 @@ GetProducts([FromQuery] ProductFilterDto filter)
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{productId:int}/images/{imageId:int}")]
-        public async Task<ActionResult> DeleteProductImage(int productId, int imageId)
+        [HttpDelete("{productId:guid}/images/{imageId:int}")]
+        public async Task<ActionResult> DeleteProductImage(Guid productId, int imageId)
         {
             var result = await _productService.DeleteProductImageAsync(productId, imageId);
 

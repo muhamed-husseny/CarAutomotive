@@ -5,7 +5,7 @@
         Task<CartDto?> GetCartAsync(string cartId);
         Task<CartDto?> AddToCartAsync(string cartId, AddToCartDto dto);
         Task<CartDto?> UpdateQuantityAsync(string cartId, UpdateCartItemDto dto);
-        Task<CartDto?> RemoveFromCartAsync(string cartId, int productId);
+        Task<CartDto?> RemoveFromCartAsync(string cartId, Guid productId);
         Task<bool> ClearCartAsync(string cartId);
     }
 }

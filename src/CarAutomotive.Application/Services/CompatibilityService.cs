@@ -1,3 +1,5 @@
+using CarAutomotive.Core.Errors;
+
 namespace CarAutomotive.Application.Services
 {
     public class CompatibilityService : ICompatibilityService
@@ -14,6 +16,9 @@ namespace CarAutomotive.Application.Services
         }
         public async Task<CompatibilityDto> CreateAsync(CreateCompatibilityDto dto)
         {
+            if (dto.ProductId == Guid.Empty)
+                throw new BadRequestException("ProductId must be a valid non-empty GUID.");
+
             var compatibility = _mapper.Map<Compatibility>(dto);
 
             _unitOfWork.Repository<Compatibility>()
@@ -25,7 +30,7 @@ namespace CarAutomotive.Application.Services
         }
 
         public async Task<IReadOnlyList<CompatibilityDto>>
-        GetByProductIdAsync(int productId)
+        GetByProductIdAsync(Guid productId)
         {
 
             var items = await _unitOfWork
@@ -33,7 +38,7 @@ namespace CarAutomotive.Application.Services
      .GetAllAsync();
 
             var result = items
-                .Where(x => x.ProductId.ToString() == productId.ToString() || Math.Abs(x.ProductId.GetHashCode()) == productId)
+                .Where(x => x.ProductId == productId)
                 .ToList();
 
             return _mapper.Map<IReadOnlyList<CompatibilityDto>>(result);

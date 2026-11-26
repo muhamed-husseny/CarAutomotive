@@ -74,13 +74,6 @@ namespace CarAutomotive.Core.Specifications
             AddInclude(p => p.Brand);
             AddInclude(p => p.Compatibilities);
         }
-        public ProductsWithCategorySpec(int id) : base(p => false) 
-        {
-            AddInclude(p => p.Category);
-            AddInclude(p => p.ProductImages);
-            AddInclude(p => p.Brand);
-            AddInclude(p => p.Compatibilities);
-        }
        
     }
 }
