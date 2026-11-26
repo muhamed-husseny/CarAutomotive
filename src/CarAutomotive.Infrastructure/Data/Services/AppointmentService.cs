@@ -47,21 +47,32 @@
            
             return _mapper.Map<AppointmentDto>(appointment);
         }
-        public async Task<AppointmentDto> GetAppointmentByIdAsync(Guid appointmentId)
+        public async Task<AppointmentDto> GetAppointmentByIdAsync(Guid appointmentId, Guid requestingUserId, bool isAdmin = false)
         {
-           
-            var appointment = await _unitOfWork.Repository<Appointment>().GetById(appointmentId);
+            var spec = new AppointmentByIdSpecification(appointmentId);
+            var appointment = await _unitOfWork.Repository<Appointment>().GetByIdWithSpecAsync(spec);
 
             if (appointment == null)
             {
-                throw new Exception("The appointment does not exist!");
+                throw new KeyNotFoundException("The appointment does not exist.");
             }
+
+            EnsureAppointmentAccess(appointment, requestingUserId, isAdmin);
 
             return _mapper.Map<AppointmentDto>(appointment);
         }
 
-        public async Task<IReadOnlyList<AppointmentDto>> GetMechanicAppointmentsAsync(Guid mechanicId)
+        public async Task<IReadOnlyList<AppointmentDto>> GetMechanicAppointmentsAsync(Guid mechanicId, Guid requestingUserId, bool isAdmin = false)
         {
+            if (!isAdmin && mechanicId != requestingUserId)
+            {
+                var mechanic = await _unitOfWork.Repository<MechanicProfile>().GetById(mechanicId);
+                if (mechanic == null || mechanic.UserId != requestingUserId)
+                {
+                    throw new UnauthorizedAccessException("You are not authorized to view this mechanic's appointments.");
+                }
+            }
+
             var spec = new AppointmentByMechanicSpecification(mechanicId);
             var appointments = await _unitOfWork.Repository<Appointment>().ListAsync(spec);
 
@@ -76,14 +87,17 @@
             return _mapper.Map<IReadOnlyList<AppointmentDto>>(appointments);
         }
 
-        public async Task<AppointmentDto> UpdateAppointmentStatusAsync(Guid appointmentId, AppointmentStatus newStatus, Guid requestingUserId)
+        public async Task<AppointmentDto> UpdateAppointmentStatusAsync(Guid appointmentId, AppointmentStatus newStatus, Guid requestingUserId, bool isAdmin = false)
         {
-            var appointment = await _unitOfWork.Repository<Appointment>().GetById(appointmentId);
+            var spec = new AppointmentByIdSpecification(appointmentId);
+            var appointment = await _unitOfWork.Repository<Appointment>().GetByIdWithSpecAsync(spec);
 
             if (appointment == null)
             {
-                throw new Exception("The reservation does not exist!");
+                throw new KeyNotFoundException("The appointment does not exist.");
             }
+
+            EnsureAppointmentAccess(appointment, requestingUserId, isAdmin);
 
             appointment.Status = newStatus;
 
@@ -91,6 +105,21 @@
             await _unitOfWork.CompleteAsync();
 
             return _mapper.Map<AppointmentDto>(appointment);
+        }
+
+        private static void EnsureAppointmentAccess(Appointment appointment, Guid requestingUserId, bool isAdmin)
+        {
+            if (isAdmin)
+                return;
+
+            var isOwner = appointment.UserId == requestingUserId;
+            var isAssignedMechanic = appointment.MechanicId == requestingUserId
+                || (appointment.Mechanic != null && appointment.Mechanic.UserId == requestingUserId);
+
+            if (!isOwner && !isAssignedMechanic)
+            {
+                throw new UnauthorizedAccessException("You are not authorized to access this appointment.");
+            }
         }
     }
 }

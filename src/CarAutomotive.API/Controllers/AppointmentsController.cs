@@ -15,8 +15,8 @@
         [EnableRateLimiting("StrictPolicy")]
         public async Task<ActionResult<AppointmentDto>> CreateAppointment(CreateAppointmentDto dto)
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
+            if (!TryGetCurrentUserId(out var userId))
+                return Unauthorized();
 
             try
             {
@@ -33,36 +33,60 @@
             }
         }
 
-        [HttpPut("{id}/status")]
+        [HttpPut("{id:guid}/status")]
         public async Task<ActionResult<AppointmentDto>> UpdateStatus(Guid id, [FromBody] AppointmentStatus newStatus)
         {
-            var requestingUserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (!TryGetCurrentUserId(out var requestingUserId))
+                return Unauthorized();
 
-            var appointment = await _appointmentService.UpdateAppointmentStatusAsync(id, newStatus, requestingUserId);
+            var appointment = await _appointmentService.UpdateAppointmentStatusAsync(
+                id,
+                newStatus,
+                requestingUserId,
+                User.IsInRole("Admin"));
             return Ok(appointment);
         }
 
         [HttpGet("my-appointments")]
         public async Task<ActionResult<IReadOnlyList<AppointmentDto>>> GetMyAppointments()
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (!TryGetCurrentUserId(out var userId))
+                return Unauthorized();
 
             var appointments = await _appointmentService.GetUserAppointmentsAsync(userId);
             return Ok(appointments);
         }
 
-        [HttpGet("mechanic/{mechanicId}")]
+        [HttpGet("mechanic/{mechanicId:guid}")]
         public async Task<ActionResult<IReadOnlyList<AppointmentDto>>> GetMechanicAppointments(Guid mechanicId)
         {
-            var appointments = await _appointmentService.GetMechanicAppointmentsAsync(mechanicId);
+            if (!TryGetCurrentUserId(out var requestingUserId))
+                return Unauthorized();
+
+            var appointments = await _appointmentService.GetMechanicAppointmentsAsync(
+                mechanicId,
+                requestingUserId,
+                User.IsInRole("Admin"));
             return Ok(appointments);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<AppointmentDto>> GetAppointmentById(Guid id)
         {
-            var appointment = await _appointmentService.GetAppointmentByIdAsync(id);
+            if (!TryGetCurrentUserId(out var requestingUserId))
+                return Unauthorized();
+
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(
+                id,
+                requestingUserId,
+                User.IsInRole("Admin"));
             return Ok(appointment);
+        }
+
+        private bool TryGetCurrentUserId(out Guid userId)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Guid.TryParse(userIdString, out userId);
         }
 
     }

@@ -3,7 +3,7 @@ using CarAutomotive.Core.Interfaces;
 
 namespace CarAutomotive.API.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Mechanic")]
     [Route("api/v1/mechanic/bookings")]
     public class MechanicBookingsController : BaseApiController
     {
