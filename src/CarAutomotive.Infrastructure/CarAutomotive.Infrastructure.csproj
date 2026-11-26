@@ -7,12 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="Data\Migrations\**" />
-		<EmbeddedResource Remove="Data\Migrations\**" />
-		<None Remove="Data\Migrations\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\CarAutomotive.Application\CarAutomotive.Application.csproj" />
 		<ProjectReference Include="..\CarAutomotive.Core\CarAutomotive.Core.csproj" />
 	</ItemGroup>
@@ -21,7 +15,7 @@
 		<PackageReference Include="AutoMapper" Version="16.1.1" />
 		<PackageReference Include="MailKit" Version="4.17.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.24" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.17.0" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="8.0.11" />
@@ -34,6 +28,10 @@
 
 	<ItemGroup>
 		<None Update="Data\DataSeeds\mechanics.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
+		<None Update="Data\DataSeeds\SeedData\brands.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 
